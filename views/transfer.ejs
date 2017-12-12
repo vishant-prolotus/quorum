@@ -1,0 +1,297 @@
+
+
+ <%- include('./partials/scripts') -%>
+ 
+ <body>
+ 
+     <!-- Site Container -->
+     <div id="site-container">
+ 
+         <!-- Dashboard Area -->
+         <div class="dashboard-area">
+ 
+             <!-- Dashboard Header -->
+             
+             <%- include('./partials/header') -%>
+             <!-- Dashboard Header -->
+ 
+             <!-- Dashboard Main -->
+             <!-- Dashboard Main -->
+             <main class="dashboard-main">
+                     <div class="container">
+                         <div class="row">
+                             <div class="col-sm-12">
+                                 <div class="dashboard-card full-view-card">
+                                     <h1 class="dashboard-card-heading text-center">Transactions
+ 
+                                     </h1>
+                                     <div class="text-center">
+                                        <img id="loader" class="image-loader"  src="images/loader.gif">
+
+                                     </div>
+     
+                                     <!-- Tab Navigation -->
+                                     <div class="tab-navigation money-transfer-tabs marT30">
+                                         <ul class="tab-head text-center">
+                                             <li><a class="tab-link active" data-tab="single-transaction">Single Transaction</a></li>
+                                             <li><a class="tab-link" data-tab="bulk-transaction">Bulk Transaction</a></li>
+                                         </ul>
+                                         <%= success_msg %>
+                                         <%= error_msg %>
+                                         <ul class="error-msg">
+
+                                         </ul>
+                                         <% for(var i = 0; i < errors.length - 1; i++){ %>
+                                             <li> <%= errors[i].msg %> </li>
+                                           <% } %> 
+                                         <div class="tab-content">
+                                         <form method="post" action="transfer">   
+                                             <div id="single-transaction" class="tab-pane active">
+                                                     <div class="form marT30">
+                                                     <div class="form-group">
+                                                         <label class="form-group-label">Transaction ID(auto)</label>
+                                                         <input type="text" name="transaction_id" readonly class="form-control" placeholder="00000921" value="<%= output.transactionId %>" />
+                                                     </div>
+
+                                                     <div class="form-group">
+                                                            <label class="form-group-label">Nature of Transaction</label>
+                                                            <select name="nature_of_transaction" class="form-control theme-selectbox">
+                                                            <option value="Cash">Incoming</option>
+                                                            <option value="Cheque">Outgoing</option>
+                                                            </select>
+                                                    </div>
+                                                     
+                                                     <div class="form-group">
+                                                             <label class="form-group-label">Sending Bank Name</label>
+                                                             <input type="text" name="sending_bank_name" class="form-control" placeholder="Enter bank account number" value="<%=output.name%>" />
+                                                    </div>
+                                                         <div class="form-group">
+                                                                <label class="form-group-label">Sending Bank AML ID(auto) </label>
+                                                                <input type="text" name="sending_bank_id" readonly class="form-control" placeholder="ID-93433" value="<%= output.bankId %>" />
+                                                          </div>
+                                                   <div class="form-group">
+                                                         <label class="form-group-label">Sending Bank Account Number</label>
+                                                         <input type="text" name="sending_bank_acc_no" class="form-control" placeholder="Enter bank account number" value="<%=output.address%>" />
+                                                     </div>
+                                                 
+ 
+                                                     <div class="form-group">
+                                                             <label class="form-group-label">Receiving Bank Name</label>
+                 
+                                                             <select class="form-control theme-selectbox" name="receiving_bank_name">
+                                                                   
+                                                           <% for(var i=0;i<output.bankList.length;i++){ %>
+                                                             <option value="<%=output.bankList[i].name %>"><%=output.bankList[i].name %></option>
+                                                            <% } %>
+                                                             </select>
+                                                         </div>
+                                                         <div class="form-group">
+                                                                <label class="form-group-label">Receiving Bank AML ID(auto) </label>
+                                                                <input type="text" name="receiving_bank_id" readonly class="form-control" placeholder="ID-93433" value="<%= output.bankId %>" />
+                                                            </div>
+                                                     <div class="form-group">
+                                                         <label class="form-group-label">Receiving Bank Account Number</label>
+                                                         <input type="tel" name="receiving_bank_acc_no" class="form-control" placeholder="Enter receiving account number" />
+                                                     </div>
+ 
+                                                     
+                                                     <div class="form-group">
+                                                         <label class="form-group-label">Transaction Amount</label>
+                                                         <input type="tel" name="transaction_amt" class="form-control" placeholder="Enter Amount" />
+                                                     </div>
+                                                     <div class="form-group">
+                                                         <label class="form-group-label">Transaction Type</label>
+                                                         <select class="form-control theme-selectbox" name="transaction_type">
+                                                                <option value="Cash">Cash</option>
+                                                                <option value="Cheque">Cheque</option>
+                                                                <option value="Wire Transfer">Wire Transfer</option>
+                                                                <option value="Other">Other</option>
+                                                         </select>
+                                                     </div>
+                                                     <div class="form-group">
+                                                         <label class="form-group-label">Transaction Date</label>
+                                                         <select class="form-control theme-selectbox" name="transaction_date">
+                                                         <option value="<%=output.now%>">Now</option>
+                                                         <option value="<%=output.Tomorrow%>">Tomorrow</option>
+                                                         <option value="<%=output.In2Days%>">In 2 Days</option>
+                                                         <option value="<%=output.NextWeek%>">Next Week</option>
+                                                         </select>
+                                                     </div>
+
+                                                     <!-- <div class="form-group">
+                                                             <label class="form-group-label">Transaction Date</label>
+                                                             <input type="tel" name="transaction_date" readonly class="form-control" placeholder="Enter Date" value="<%=output.currentDate %>" />
+                                                         </div> -->
+                                                        <!-- <div class="form-group">
+                                                            <label class="form-group-label">Transaction Status (auto)</label>
+                                                            <input type="text" name="status" disabled class="form-control" placeholder="Transaction Status" />
+                                                        </div> -->
+                                                     <div class="form-group">
+                                                         <label class="form-group-label">Notes</label>
+                                                         <input type="text" name="notes" class="form-control" placeholder="Enter notes" />
+                                                     </div>
+                                                    <div class="form-group form-group-submit text-center">
+                                                        <input type="hidden" name="unique_id" value="<%=output.unique_id %>" /> 
+                                                        <input type="submit" id="record_Submit" class="primary-btn submit-btn" onclick="return validateForm()" name="submit" value="Record to Ledger">
+                                                        <div class="left-side">
+                                                        <img id="loader" class="image-loader"  src="images/loader.gif">
+                                                        </div>
+
+                                                     </div>
+                                                     
+                                                 </div>
+                                                </form>
+                                             </div>
+                                             
+                                         <form method="post" id="upload_form" enctype="multipart/form-data" action="/uploadBulkTransactions">
+                                             <div id="bulk-transaction" class="tab-pane">
+                                                 <div class="form marT30">
+                                                     <div class="form-group">
+                                                         <label class="form-group-label">To </label>
+                                                         <div class="multipleErrorMsg"></div>
+                                                         <div class="custom-input-file">
+                                                             <input type="file" id="sendToMultiple" name="filename" class="inputfile" accept=".csv" />
+                                                             <label for="sendToMultiple">
+                                                                 <span class="selected-value">No file Selected</span>
+                                                                 <strong class="file-btn"><span class="file-btn-text">Browse</span></strong>
+                                                                 </label>
+                                                         </div>
+                                                     </div>
+                                        <div class="form-group form-group-submit text-center">
+                                                <input type="submit" id="signIn_form_submit" name="form_submit" class="primary-btn submit-btn" onclick="return validateBulkUpload()" value="Upload">
+                                            <!-- <a href="bulk-transfer-step2.html" class="primary-btn submit-btn">Upload</a> -->
+                                        </div>
+
+                                                     <!-- <div class="form-group form-group-submit">
+                                                            <input type="submit" id="signIn_form_submit" name="form_submit" class="primary-btn submit-btn" value="Upload">
+                                                    </div> -->
+                                                 </div>
+                                             </div>
+                                         </form>
+                                         </div>
+                                     
+                                     </div>
+                                     <!-- Tab Navigation -->
+     
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </main>
+                 <!-- Dashboard Main -->
+     
+             <!-- Dashboard Main -->
+ 
+         </div>
+         <!-- Dashboard Area -->
+ 
+         <!-- CSV Table Popup -->
+         <div class="popup csvtable-popup fs-overlay-popup">
+            <div class="popup-content">
+             <table id="csvtable">
+                 <thead>
+                     <tr>
+                         <th>
+                             Name
+                         </th>
+                         <th>
+                             Designation
+                         </th>
+                         <th>
+                             Country
+                         </th>
+                         <th>
+                             Amount
+                         </th>
+                     </tr>
+                 </thead>
+                 <tbody>
+                 </tbody>
+             </table>
+             </div>
+         </div>
+         <!-- CSV Table Popup -->
+         
+         <!-- FS Overlay -->
+         <div class="fs-overlay"></div>
+         <!-- FS Overlay -->
+ 
+     </div>
+     <!-- Site Container -->
+ 
+   
+ 
+ </body>
+ 
+ </html>
+ <script>
+ $("[name='receiving_bank_name']").change(function(){;
+ $.ajax({
+ type:"POST",
+ cache:false,
+ url:"/getBankAccount",
+ data:{name:$(this).find('option:selected').text()}, 
+ success:function(result){
+
+//console.log(result);
+$("[name='receiving_bank_id']").val(result.id);
+ //$("[name='receiving_bank_acc_no']").val(result.address);
+ },
+ error:function(err){
+     console.log(err);
+ 
+ }
+ })
+ });
+ $("[name='receiving_bank_name']").trigger('change');
+
+ $('#record_Submit').click(function(){
+    //$('#loader').show();
+ });
+ 
+ 
+function validateForm(){
+var i=0;
+var msg="";    
+if($("[name='receiving_bank_acc_no']").val()==""){
+msg1="<li>Please enter receiving bank account no</li>";
+i++;
+}else{
+    msg1="";  
+}
+if($("[name='transaction_amt']").val()==""){
+msg2="<li>Please enter amount</li>";
+i++;
+}else{
+    msg2="";
+}
+if(i>0){
+    msg=msg1+msg2;
+    console.log(msg);
+    $('.error-msg').html(msg);
+    return false;
+}
+$('#loader').show();
+return true;     
+}
+
+function validateBulkUpload(){
+//return true;
+if($('#sendToMultiple').val()==''){
+$('.multipleErrorMsg').html("Please provide csv file to upload");
+return false;
+}
+$('#loader').show();
+return true;
+}
+ </script>
+
+ <style>
+ .image-loader{
+    display:none;
+    width: 125px;
+ }
+ .left-side{
+    margin-left: -450px;
+ }
+ </style>

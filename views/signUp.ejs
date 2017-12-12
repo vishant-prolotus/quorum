@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Register | Banking</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/site.css" />
+</head>
+
+<body>
+
+    <!-- Site Container -->
+    <div id="site-container">
+       
+       <!-- Login Area -->
+        <div class="login-area register-user">
+        
+        <!-- Login Sidebar -->
+        <aside class="login-area-sidebar hidden-xs">
+        <div class="login-sidebar-header">
+        <h2 class="login-sidebar-heading">Welcome to AML Central</h2>
+        <p class="login-sidebar-text">Enter details for creating your AML Account</p>
+        </div>
+        <div class="login-sidebar-footer">
+        <a href="#" class="sidebar-footer-text">Learn More</a>
+        </div>
+        </aside>
+        <!-- Login Sidebar -->
+        
+        <!-- Login Main -->
+        <main class="login-area-main">
+        <div class="login-main-header text-right">
+        <p class="header-text">Have an account?</p>
+        <a href="signIn" class="primary-btn is-ghost-btn is-rounded">Login</a>
+        </div>
+        <div class="login-main-content">
+        <h1 class="form-heading">Create your account</h1>
+        <% for(var i = 0; i < errors.length - 1; i++){ %>
+            <li> <%= errors[i].msg %> </li>
+          <% } %>        
+        <form method="post" action="signUp">        
+                <div class="form login-form">
+                    <div class="form-group">
+                    <label class="form-group-label">Email address</label>
+                    <input type="email" name="email" class="form-control" placeholder="enter your email" />
+                    </div>
+                    <div class="form-group">
+                    <label class="form-group-label">Full Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="enter your email" />
+                    </div>
+                    <div class="form-group">
+                    <label class="form-group-label clearfix">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                    </div>
+                    <div class="form-group form-group-submit">
+                    <input type="submit" name="submit" class="primary-btn submit-btn" value="Send Request">
+                    <!--<a href="dashboard" class="primary-btn submit-btn">Signup</a>-->
+                    </div>
+                </div>
+            </form>
+        
+        </div>
+        </main>
+        <!-- Login Main -->
+        
+        </div>
+        <!-- Login Area -->
+        
+    </div>
+    <!-- Site Container -->
+
+</body>
+
+</html>

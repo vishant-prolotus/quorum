@@ -1,0 +1,91 @@
+
+
+
+<header class="dashboard-header">
+    <div class="container">
+        <div class="row">
+
+            <!-- Logo -->
+            <div class="logo col-md-2 col-xs-6">
+                <a href="dashboard">
+                        <strong>AML</strong> Central
+                    <!-- <img src="images/logo.png" alt="Logo" /> -->
+                </a>
+            </div>
+        
+            <!-- Logo -->
+
+            <!--Main Navigation -->
+            <nav id="main-navigation" class="col-md-6">
+                <ul class="list-inline">
+                    <li><a href="dashboard">
+                        <i class="nav-icon dashboard-icon"></i>Dashboard</a>
+                    </li>
+                     
+                    <% if(output.userType=='bank'){ %>
+                        <li class="has-nav-dropdown username user-panel-item"><a><i class="nav-icon money-transfer-icon"></i>
+                            <!--Money Transfer-->
+                            Transactions
+                        </a>
+                            <div class="nav-dropdown">
+                                    <ul>
+                                        <li ><a href="transfer">Manage Transactions</a></li>
+                                        <li ><a href="transactions">View Transactions</a></li>
+                                        
+                                    </ul>
+                                </div>
+                        </li>
+                        
+
+                    <% }else if(output.userType=='admin' || output.userType=='regulator'){
+                        
+                        %>
+                    
+                        <li class="username user-panel-item"><a href="transactions"><i class="nav-icon money-transfer-icon"></i>Transactions</a>
+                             
+                        </li>
+                        <li class="has-nav-dropdown username user-panel-item">
+                            <a><i class="nav-icon money-transfer-icon"></i>Admin</a>
+                            <div class="nav-dropdown">
+                                    <ul>
+                                        <% if(output.userType=='admin'){%>
+                                        <li><a href="addBank">Add Bank</a></li>
+                <!--suspiciousaccount --><li><a href="#">Add Suspicious Account</a></li>
+                <!--suspiciouslimit --><li><a href="#">Add Suspicious Limit</a></li>
+                                        <% } %>
+                                        <li><a href="banks">Banks</a></li>
+                                    </ul>
+                                </div>  
+                        </li>                        
+                         
+                 <% } %>
+                 <li class="visible-xs visible-sm"><a href="logout"><i class="nav-icon logout-icon"></i>Logout</a></li>                 
+                
+                </ul>
+            </nav>
+            <!--Main Navigation -->
+
+            <!-- User Panel -->
+            <div class="col-md-4 col-xs-6 padL0-md">
+                <ul class="user-panel">
+                    <li class="username user-panel-item"><strong>Hello,</strong> 
+                        <a id="menuTrigger" class="visible-xs visible-sm"></a>
+                        <% if(output){ %>
+                        <%- output.name %>
+                        <% } %>  
+                        
+                        <img class="user-img hidden-xs" src="images/user-img.png" alt="User Image" />
+                    </li>
+                    <li class="notifications user-panel-item hidden-xs hidden-sm"><img width="25" src="images/notification-icon.svg" alt="Icon" /><span class="unread-icon"></span></li>
+                    <li class="logout user-panel-item hidden-xs hidden-sm">
+                            <a href="logout">Logout 
+                        <img width="50" src="images/logout-icon.svg" alt="Icon" /></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- User Panel -->
+
+        </div>
+    </div>
+</header>
+

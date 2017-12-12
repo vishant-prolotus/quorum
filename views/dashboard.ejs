@@ -1,0 +1,390 @@
+<%- include('./partials/scripts') -%>
+
+    <body>
+
+        <!-- Site Container -->
+        <div id="site-container">
+
+            <!-- Dashboard Area -->
+            <div class="dashboard-area">
+
+                <!-- Dashboard Header -->
+                <%- include('./partials/header') -%>
+                    <!-- Dashboard Header -->
+
+                    <!-- Dashboard Main -->
+                    <main class="dashboard-main">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h1 class="dashboard-main-heading">Dashboard</h1>
+                                        <p class="dashboard-main-tagline">You are in the main panel</p>
+                                        <a href="#" class="primary-btn dashboard-main-btn is-small hide">+ <span class="hidden-xs"> Add Modules</span></a>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="dashboard-card summary-card">
+                                            <div class="dashboard-card-header">
+                                                <h2 class="dashboard-card-heading">Blockchain Statistics</h2>
+                                                <div class="dashboard-card-filter">
+<h6 class="filter-heading">Period</h6>
+<select class="form-control theme-selectbox">
+<option value="Last Week">Last Week</option>
+<option value="Last Month">Last Month</option>
+<option value="Last Year">Last Year</option>
+</select>
+                                                </div>
+                                            </div>
+                                            <div class="dashboard-card-content">
+                                                    
+                                                    <!-- Dashboard Card Tabs -->
+                                                    <ul class="dashboard-card-tabs has-popup-trigger">
+                                                     <li class="tab-item primary-btn">
+                                                     <span class="tab-item-icon"><img width="40" src="images/play-icon.svg" alt="Node Status Icon" /></span>
+                                                     <h5 class="tab-item-heading">Node Status</h5>
+                                                     <strong class="tab-item-val">Running</strong>
+                                                     </li>
+                                                     <li class="tab-item primary-btn">
+                                                     <span class="tab-item-icon"><img width="50" src="images/users-icon.svg" alt="Users Icon" /></span>
+                                                     <h5 class="tab-item-heading">Peers</h5>
+                                                     <strong class="tab-item-val">3</strong>
+                                                     </li>
+                                                     <li class="tab-item primary-btn popup-trigger" data-popup="blocksPopup">
+                                                     <span class="tab-item-icon"><img width="40" src="images/blocks-icon.svg" alt="Blocks Icon" /></span>
+                                                     <h5 class="tab-item-heading">Blocks</h5>
+                                                     <strong class="tab-item-val"><%=output.transactionsList.length%></strong>
+                                                     </li>
+                                                     <li class="tab-item primary-btn popup-trigger" data-popup="queuedTxnsPopup">
+                                                     <span class="tab-item-icon"><img width="40" src="images/queued-transactions-icon.svg" alt="Queued Txns Icon" /></span>
+                                                     <h5 class="tab-item-heading">Queued Txns</h5>
+                                                     <strong class="tab-item-val"><%=output.transactionsList.length%></strong>
+                                                     </li>
+                                                    </ul>
+                                                    <!-- Dashboard Card Tabs -->
+                                                    
+                                                     <!-- <img src="images/chart-img.jpg" alt="Chart" /> -->
+
+
+                                                     <canvas id="myChart" style="width: 100%; height: 500px"></canvas>
+                                                 </div>
+                                        </div>
+            
+                                        <!-- <div class="dashboard-card summary-card">
+                                            <div class="dashboard-card-header">
+                                                <h2 class="dashboard-card-heading">Transactions Summary</h2>
+                                                <div class="dashboard-card-filter">
+                                                    <h6 class="filter-heading">Period</h6>
+                                                    <select class="form-control theme-selectbox">
+                        <option value="Last Week">Last Week</option>
+                        <option value="Last Month">Last Month</option>
+                        <option value="Last Year">Last Year</option>
+                        </select>
+                                                </div>
+                                            </div>
+                                            <div class="dashboard-card-content">
+                                                <img src="images/dashboard-summary-chart.png" alt="Chart" />
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                    <div class="col-md-6 col-lg-5">
+                                        <div class="dashboard-card summary-card">
+                                            <div class="dashboard-card-header">
+                                                <h2 class="dashboard-card-heading">Your Txns.</h2>
+                                                
+                                                <ul class="card-filter-list list-inline ">
+                                                    <li>
+                                                        <div class="dashboard-card-filter">
+
+<h6 class="filter-heading">Period</h6>
+<select class="form-control theme-selectbox">
+<option value="Last Week">Last 2 Days</option>
+<option value="Last Month">Last 7 Days</option>
+<option value="Last Year">Last Month</option>
+</select>
+
+                                                        </div>
+                                                    </li>
+                                                    <% if(output.userType!='bank'){ %>                                                <li>
+<div class="dashboard-card-filter sort-by-filter">
+
+<h6 class="filter-heading">Sort By.</h6>
+<select class="form-control theme-selectbox">
+<option value="Bank1">Bank1</option>
+<option value="Bank2">Bank2</option>
+<option value="Bank3">Bank3</option>
+</select>
+
+                                                        </div>
+                                                        <% }%>
+                                                    </li>
+                                                </ul>
+                                              
+            
+                                            </div>
+                                            <div class="dashboard-card-content">
+                                                <ul class="dashboard-card-list site-accordion card-list-accordion list-items-limiter">
+                                                    <% for(var i=0; i < output.transactions.length; i++) { %>
+                                                <li class="accordion-block">
+                                                    <div class="accordion-block-heading"> 
+                                                            <span class="card-list-icon" style="background: #22b5d0">F</span>
+                                                            
+                                                    <span class="card-list-date"><%= output.transactions[i].transaction_date%></span>
+                                                    <div class="card-list-content">
+                                                        <h6 class="card-list-heading"><%= output.transactions[i].amount%></h6>
+                                                        <p class="card-list-text hash-wrap">Transfer Order No. <%= output.transactions[i].blockchain_tx_id_hash%></p>
+                                                    </div>
+                                                </div>
+                                                <div class="accordion-block-content">
+                                                        <ul class="site-popup-list">
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">Hash:</strong>
+                                                                <span class="col-sm-7 hash-wrap"><%=output.transactionsList[i].blockchain_tx_id_hash%></span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">Block Hash:</strong>
+                                                                <span class="col-sm-7 hash-wrap"><%=output.transactionsList[i].blockchain_tx_id_hash%></span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">Block No:</strong>
+                                                                <span class="col-sm-7">3454</span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">From:</strong>
+                                                                <span class="col-sm-7 hash-wrap"><%=output.transactionsList[i].sending_bank_acc_no%></span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">To:</strong>
+                                                                <span class="col-sm-7 hash-wrap"><%=output.transactionsList[i].receiving_bank_acc_no%></span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">Gas Price:</strong>
+                                                                <span class="col-sm-7">$0</span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">Gas:</strong>
+                                                                <span class="col-sm-7">500000</span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">Gas Used:</strong>
+                                                                <span class="col-sm-7">0</span>
+                                                                </li>
+                                                                <li class="row">
+                                                                <strong class="col-sm-5">input:</strong>
+                                                                <span class="col-sm-7">000xw312322</span>
+                                                                </li>
+                                                                </ul>
+                                                </div>
+                                                </li>
+                                                <% } %>
+         
+                                            </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7 col-md-6">
+                                            <div class="dashboard-card summary-card">
+                                                <div class="dashboard-card-header">
+                                                    <h2 class="dashboard-card-heading">Your Incoming Alerts</h2>
+                                                </div>
+                                                <div class="dashboard-card-content">
+                                                    <ul class="dashboard-card-list theme2 list-items-limiter">
+                                                        <li>
+                                                            <span class="card-list-icon info-alert-icon has-bg"></span>
+                                                            <div class="card-list-content">
+                                                            <p class="card-list-text" style="color:red;"><strong>Info Alert: </strong> <%=output.redError%>   Suspicious Transactions Detected on Regular Account.</p>
+                                                                <span class="card-list-date">just now</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <span class="card-list-icon success-icon has-bg"></span>
+                                                            <div class="card-list-content">
+                                                                <p class="card-list-text" style="color:green;"><strong>Success: </strong>   <%=output.greenError%>   Successfull transaction  detected.</p>
+                                                                <span class="card-list-date">2 Days ago</span>
+                                                            </div>
+                                                        </li>
+                                                        <!-- <li>
+                                                            <span class="card-list-icon error-icon has-bg"></span>
+                                                            <div class="card-list-content">
+                                                                <p class="card-list-text"><strong>Error Alert: </strong> You have entered wrong password 2 times.</p>
+                                                                <span class="card-list-date">Last Week</span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <span class="card-list-icon info-alert-icon has-bg"></span>
+                                                            <div class="card-list-content">
+                                                                <p class="card-list-text"><strong>Info Alert: </strong> You've got Alert for Incoming Transaction.</p>
+                                                                <span class="card-list-date">just now</span>
+                                                            </div>
+                                                        </li> -->
+                
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </main>
+                    <!-- Dashboard Main -->
+
+                    <div class="fs-overlay"></div>
+
+                    <!-- Popups -->
+
+                    <!-- Blocks Popup -->
+                    <div class="blocksPopup site-popup fs-overlay-popup">
+                            <a class="site-popup-close">Close</a>
+                            <div class="site-popup-content">
+                            <!-- Theme Table -->
+                                                <div class="theme-table-wrapper custom-scroller scrollbar-inner">
+                                                <table class="theme-table responsive-table">
+                                                <thead>
+                                                <tr>
+                                                <th>Timestamp</th>
+                                                <th>Block Hash</th>
+                                                <th>Transaction Count</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                
+                                                <% 
+                if(output.transactionsList.length>0){
+                for(var i=0;i<output.transactionsList.length;i++){%>
+                                                               
+                                                <tr>
+                <td><%=output.transactionsList[i].transaction_date%></td>
+                <td><a class="hash-wrap"><%=output.transactionsList[i].blockchain_tx_id_hash%></a></td>
+                <td>1</td>
+                </tr>
+                <% }}else{ %>
+                <tr><td colspan="3">No Record found</td></tr>    
+                <% }%>
+                
+                                                </tbody>
+                                                </table>
+                                                </div>
+                                                <!-- Theme Table -->
+                            </div>
+                            </div>
+                    <!-- Blocks Popup -->
+
+                    <!-- Queued Txns Popup -->
+                    <div class="queuedTxnsPopup site-popup fs-overlay-popup">
+                            <a class="site-popup-close">Close</a>
+                            <div class="site-popup-content custom-scroller scrollbar-inner">
+                            <h5 class="form-popup-heading">Hash Transactions</h5>
+                            
+                            <!-- Accordion -->
+                            <div class="site-accordion">
+                            
+                                    <% 
+                            if(output.transactionsList.length>0){
+                            for(var i=0;i<output.transactionsList.length;i++){%>
+                            <!--Accordion Block -->
+                            <div class="accordion-block">
+                            <div class="accordion-block-heading hash-wrap"><%=output.transactionsList[i].blockchain_tx_id_hash%></div>
+                            <div class="accordion-block-content">
+                            <ul class="site-popup-list">
+                            <li class="row">
+                            <strong class="col-sm-6">Hash:</strong>
+                            <span class="col-sm-6 hash-wrap"><%=output.transactionsList[i].blockchain_tx_id_hash%></span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">Block Hash:</strong>
+                            <span class="col-sm-6 hash-wrap"><%=output.transactionsList[i].blockchain_tx_id_hash%></span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">Block No:</strong>
+                            <span class="col-sm-6">3454</span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">From:</strong>
+                            <span class="col-sm-6 hash-wrap"><%=output.transactionsList[i].sending_bank_acc_no%></span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">To:</strong>
+                            <span class="col-sm-6 hash-wrap"><%=output.transactionsList[i].receiving_bank_acc_no%></span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">Gas Price:</strong>
+                            <span class="col-sm-6">$0</span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">Gas:</strong>
+                            <span class="col-sm-6">500000</span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">Gas Used:</strong>
+                            <span class="col-sm-6">0</span>
+                            </li>
+                            <li class="row">
+                            <strong class="col-sm-6">input:</strong>
+                            <span class="col-sm-6">000xw312322</span>
+                            </li>
+                            </ul>
+                            </div>
+                            </div>
+                            <!--Accordion Block -->
+                            <% }}else{ %>
+                                <tr><td colspan="2">No Record found</td></tr>    
+                                <% }%>
+                            
+                            </div>
+                            <!-- Accordion -->
+                            
+                            </div>
+                            </div>
+                    <!-- Queued Txns Popup -->
+
+
+                    <!-- Popups -->
+
+            </div>
+            <!-- Dashboard Area -->
+
+        </div>
+        <!-- Site Container -->
+
+        <!-- Scripts -->
+
+        <!-- Scripts -->
+
+    </body>
+
+    </html>
+    <style>
+    .alert-red{background-color: red;}
+    .set-scroll{width: 580px;
+    height: 500px;
+    overflow-y: scroll;}
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    
+    
+    <script>
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels:[<%=output.graphValue.labels%>],
+                datasets: [{
+                    label: 'Transactions Data',
+                    data: [<%=output.graphValue.dataSet%>],
+                    backgroundColor: [
+                        'rgba(8, 125, 142, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(8, 125, 142,1)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+        </script>

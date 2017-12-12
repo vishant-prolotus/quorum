@@ -1,0 +1,101 @@
+<%- include('./partials/scripts') -%>
+
+<body>
+
+    <!-- Site Container -->
+    <div id="site-container">
+
+        <!-- Dashboard Area -->
+        <div class="dashboard-area">
+
+            <!-- Dashboard Header -->
+            <%- include('./partials/header') -%>
+            <!-- Dashboard Header -->
+
+            <!-- Dashboard Main -->
+            <main class="dashboard-main">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="dashboard-card full-view-card">
+                                <h1 class="dashboard-card-heading text-center">Participants list</h1>
+
+                                <!-- Tab Navigation -->
+                                <div class="tab-navigation money-transfer-tabs marT30">
+                                <p><% if(success_msg){ %>
+                                    <%= success_msg %>
+                                    <% } %> </p>  
+                                <!-- <a href="addBank">Add Bank</a> -->
+                                </div>
+                                <!-- Tab Navigation -->
+                                <!-- Theme Table -->
+                                <div class="theme-table-wrapper">
+                                    <table class="theme-table responsive-table marT50 marT20-xs">
+                                    <thead>
+                                    <tr>
+                                    <th class="has-head-label from-label">Bank Name</th>
+                                    <th>Account No.</th>
+                                    <th>Address</th>
+                                    <th>Type</th>
+                                    <th class="has-head-label to-label">Email</th>
+                                    <% if(output.userType=='admin'){%>
+                                    <th>Edit</th>
+                                    <% } %>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% for(var i=0;i<output.bankList.length;i++){%>    
+                                    <tr>
+                                    <td class="has-cell-label from-label"><%=output.bankList[i].name %></td>
+                                    <td><%=output.bankList[i].account_no %></td>
+                                    <td><%=output.bankList[i].address %></td>
+                                    <td><%=output.bankList[i].type %></td>
+                                    <td class="has-cell-label to-label"><%=output.bankList[i].email %></td>
+                                    <% if(output.userType=='admin'){%>
+                                    <td>
+                                       
+                                        <a href="editBank?name=<%=output.bankList[i].name %>">Edit</a>
+                                       
+                                    </td>
+                                    <% }else{ %>
+                                        
+                                        <% } %>
+                                    
+
+                                        
+                                    </tr>
+                                    <% } %>
+                                    
+                                    </tbody>
+                                    </table>
+                                    <!-- <div class="text-center marT30">
+                                    <a href="bulk-transfer-step3.html" class="primary-btn">Record to Ledger</a>
+                                    </div> -->
+                                    </div>
+                                    <% if(output.userType=='regulator'){%>
+                                    <input type="button" class="primary-btn marT30" value="AddBank">
+                                    <% } %>
+                                    <!-- Theme Table -->
+
+
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <!-- Dashboard Main -->
+
+
+
+        </div>
+        <!-- Dashboard Area -->
+
+    </div>
+    <!-- Site Container -->
+
+  
+
+</body>
+
+</html>

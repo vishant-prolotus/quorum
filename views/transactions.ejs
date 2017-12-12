@@ -1,0 +1,233 @@
+<%- include('./partials/scripts') -%>
+
+<body>
+
+    <!-- Site Container -->
+    <div id="site-container">
+
+        <!-- Dashboard Area -->
+        <div class="dashboard-area">
+
+            <!-- Dashboard Header -->
+            <%- include('./partials/header') -%>
+            <!-- Dashboard Header -->
+
+            <!-- Dashboard Main -->
+            <main class="dashboard-main">
+                <div class="container">
+                    <div class="row">
+                        
+                        <div class="col-sm-12">
+                            <div class="dashboard-card full-view-card">
+                                <% if(output.userType=='bank'){ %>
+                                <!-- <h1 class="dashboard-card-heading text-center">Please Confirm Details for Uploaded Transactions </h1> -->
+                                <% } %>
+                                <!-- Theme Table -->
+                                <div class="theme-table-wrapper">
+                                <h2 class="dashboard-card-heading">Transaction Detail</h2>
+                                <table class="theme-table responsive-table marT50 marT20-xs">
+                                <thead>
+                                <tr>
+                                <th class="has-head-label from-label">Transaction ID</th>
+                                <!-- <th>Sending Bank ID</th> -->
+								<th>Sending Bank Name</th>
+								<!-- <th>Sending Bank Account No.</th> -->
+								<th>Receiving Bank Name</th>
+								<!-- <th>Receiving Bank Account No.</th> -->
+								<th>Transaction Amount</th>
+                                <th>Transaction Type</th>
+                                <!-- <th class="has-head-label to-label">Transaction Date</th> -->
+                                <th>Transaction Status</th>
+                                <!-- <th>Notes</th> -->
+                                <th>View</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+<% 
+if(output.transactionsList.length>0){
+for(var i=0;i<output.transactionsList.length;i++){%>
+<tr>
+<td><%=output.transactionsList[i].blockchain_tx_id %></td>
+<!-- <td><%=output.transactionsList[i].sending_bank_id %></td> -->
+<td class="has-cell-label from-label"><%=output.transactionsList[i].sending_bank_name %></td>
+<!-- <td><%=output.transactionsList[i].sending_bank_acc_no %></td> -->
+<td class="has-cell-label from-label"><%=output.transactionsList[i].receiving_bank_name %></td>
+<!-- <td><%=output.transactionsList[i].receiving_bank_acc_no %></td> -->
+<td><%=output.transactionsList[i].amount %></td>
+<td class="has-cell-label to-label"><%=output.transactionsList[i].transaction_type %></td>
+<!-- <td><%=output.transactionsList[i].transaction_date %></td> -->
+<td <% if(output.transactionsList[i].status=='RED'){ %> class='alert-red' <% } %>><%=output.transactionsList[i].status%></td>
+<!-- <td><%=output.transactionsList[i].notes %></td> -->
+<td class="has-popup-trigger"><p data-popup="viewMorePopup" class="popup-trigger showPopUpDetail" id="<%=output.transactionsList[i].blockchain_tx_id %>">View</p></td>
+</tr>
+
+<% }}else{ %>
+<tr><td colspan="11">No Record found</td></tr>    
+<% }%>
+
+
+                                </tbody>
+                                </table>
+                                <% if(output.userType=='bank'){ %>
+                                <div class="text-center marT30">
+                                <!-- bulk-transfer-step3.html -->
+                                <!-- <a href="/transaction_success" class="primary-btn">Ok</a> -->
+                                </div>
+                                <% } %>
+                                </div>
+                                <!-- Theme Table -->
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+
+
+
+
+
+
+                </div>
+            </main>
+            <!-- Dashboard Main -->
+            <div class="fs-overlay"></div>
+
+            <!-- Blocks Popup -->
+            <div class="viewMorePopup site-popup fs-overlay-popup">
+                    <a class="site-popup-close">Close</a>
+                    <div class="site-popup-content custom-scroller scrollbar-inner">
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Transaction ID</h4>
+                    <p class="text-group-content" id="Transaction_ID"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Sending Bank ID</h4>
+                    <p class="text-group-content" id="sending_bank_id"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Sending Bank Name</h4>
+                    <p class="text-group-content" id="sending_bank_name"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Sending Bank Account No.</h4>
+                    <p class="text-group-content" id="sending_bank_account"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Receiving Bank Name</h4>
+                    <p class="text-group-content"id="receiving_bank_name"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Receiving Bank Account No.</h4>
+                    <p class="text-group-content" id="receiving_bank_acc"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Transaction Amount</h4>
+                    <p class="text-group-content" id="transaction_amount"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Transaction Type</h4>
+                    <p class="text-group-content" id="transaction_type"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Transaction Date</h4>
+                    <p class="text-group-content" id="transaction_date"></p>
+                    </div>
+                    <div class="popup-text-group">
+                    <h4 class="text-group-heading">Transaction Status</h4>
+                    <p class="text-group-content " id="transaction_status"></p>
+                    </div>
+                    </div>
+                    </div>
+                   
+                    <!-- Blocks Popup -->
+
+
+            
+
+        </div>
+        <!-- Dashboard Area -->
+
+    </div>
+    <!-- Site Container -->
+
+    <!-- Scripts -->
+
+    <!-- Scripts -->
+
+</body>
+
+</html>
+
+<style>
+.alert-red{background-color: red;}
+.alert-green{background-color: green}
+</style>
+
+<style>
+        .viewMorePopup  {
+            max-height: 500px;
+            overflow-y: scroll;
+        }
+        .popup-text-group {
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .popup-text-group:last-child {
+            border-bottom: none;
+        }
+        .popup-text-group .text-group-heading {
+            font-weight: 600;
+            color: #087d8e;
+        }
+        .popup-text-group .text-group-heading, .popup-text-group .text-group-content {
+            margin: 0;
+            padding: 15px 0;
+            width: 50%;
+            word-break: break-all;
+            word-wrap: break-word;
+            font-size: 15px;
+        }
+    </style>
+
+    <script>
+    $('.showPopUpDetail').click(function(){
+        console.log($(this).attr('id'));
+$.ajax({
+type:"GET",
+cache:false,
+url:"/transactionsDetails",
+data:{request:$(this).attr('id')}, 
+success:function(result){
+console.log(result);
+result=result[0];
+
+                    
+                    
+                                    
+$('#Transaction_ID').html(result.transaction_id);
+
+//if(result.status=='GREEn')
+$('#transaction_status').html(result.status);
+$('#transaction_date').html(result.transaction_date);
+$('#transaction_type').html(result.transaction_type);
+$('#transaction_amount').html(result.amount);
+$('#receiving_bank_acc').html(result.receiving_bank_acc_no);
+$('#receiving_bank_name').html(result.receiving_bank_name);
+$('#sending_bank_account').html(result.sending_bank_acc_no);
+$('#sending_bank_name').html(result.sending_bank_name);
+$('#sending_bank_id').html(result.sending_bank_id);
+},
+error:function(err){
+console.log(err);
+
+}
+})
+
+
+    });
+    </script>

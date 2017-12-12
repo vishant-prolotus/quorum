@@ -1,0 +1,171 @@
+<%- include('./partials/scripts') -%>
+
+<body>
+
+    <!-- Site Container -->
+    <div id="site-container">
+
+        <!-- Dashboard Area -->
+        <div class="dashboard-area">
+
+            <!-- Dashboard Header -->
+            <%- include('./partials/header') -%>
+            <!-- Dashboard Header -->
+
+            <!-- Dashboard Main -->
+            <main class="dashboard-main">
+            <div class="container">
+            <div class="row">
+            <div class="col-md-6">
+            <h1 class="dashboard-main-heading">Dashboard</h1>
+            <p class="dashboard-main-tagline">You are in the main panel</p>
+            <a href="#" class="primary-btn dashboard-main-btn is-small hide">+ <span class="hidden-xs"> Add Modules</span></a>
+            </div>
+            <div class="col-md-6">
+            <p class="dashboard-main-tagline"></p>
+            <%= output.balance%>
+            </div>
+            <div class="col-md-12">
+            <div class="dashboard-card summary-card">
+            <div class="dashboard-card-header">
+            <h2 class="dashboard-card-heading">Summary</h2>
+            <div class="dashboard-card-filter">
+            <h6 class="filter-heading">Period</h6>
+            <select class="form-control theme-selectbox">
+            <option value="Last Week">Last Week</option>
+            <option value="Last Month">Last Month</option>
+            <option value="Last Year">Last Year</option>
+            </select>
+            </div>
+            </div>
+            <div class="dashboard-card-content">
+            <img src="images/dashboard-summary-chart.jpg" alt="Chart" />
+            </div>
+            </div>
+            </div>
+            <div class="col-md-5 col-lg-4">
+            <div class="dashboard-card summary-card">
+            <div class="dashboard-card-header">
+            <h2 class="dashboard-card-heading">Your Txns.</h2>
+            <div class="dashboard-card-filter">
+            <h6 class="filter-heading">Period</h6>
+            <select class="form-control theme-selectbox">
+            <option value="Last Week">Last 2 Days</option>
+            <option value="Last Month">Last 7 Days</option>
+            <option value="Last Year">Last Month</option>
+            </select>
+            </div>
+            </div>
+            <div class="dashboard-card-content">
+            <ul class="dashboard-card-list">
+            <li>
+            <span class="card-list-icon" style="background: #ffb2b2">A</span>
+            <span class="card-list-date">3:00 PM</span>
+            <div class="card-list-content">
+            <h6 class="card-list-heading">28, 000 PLN</h6>
+            <p class="card-list-text">Ankita Transfer Order No. 47457</p>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon" style="background: #22b5d0">F</span>
+            <span class="card-list-date">3:00 PM</span>
+            <div class="card-list-content">
+            <h6 class="card-list-heading">35, 000 PLN</h6>
+            <p class="card-list-text">Foodie Transfer Order No. 47457</p>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon" style="background: #ffab8d">A</span>
+            <span class="card-list-date">3:00 PM</span>
+            <div class="card-list-content">
+            <h6 class="card-list-heading">54, 000 PLN</h6>
+            <p class="card-list-text">Arush Transfer Order No. 47457</p>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon" style="background: #ffccfe">T</span>
+            <span class="card-list-date">3:00 PM</span>
+            <div class="card-list-content">
+            <h6 class="card-list-heading">75, 000 PLN</h6>
+            <p class="card-list-text">Tim Transfer Order No. 47457</p>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon" style="background: #22b5d0">T</span>
+            <span class="card-list-date">3:00 PM</span>
+            <div class="card-list-content">
+            <h6 class="card-list-heading">85, 000 PLN</h6>
+            <p class="card-list-text">Taylor Transfer Order No. 47457</p>
+            </div>
+            </li>
+            </ul>
+            <a href="#" class="primary-btn full-width marT30">Show More</a>
+            </div>
+            </div>
+            </div>
+            <div class="col-lg-8 col-md-7">
+            <div class="dashboard-card summary-card">
+            <div class="dashboard-card-header">
+            <h2 class="dashboard-card-heading">Your Incoming Alerts</h2>
+            </div>
+            <div class="dashboard-card-content">
+            <ul class="dashboard-card-list theme2">
+            <li>
+            <span class="card-list-icon info-alert-icon has-bg"></span>
+            <div class="card-list-content">
+            <p class="card-list-text"><strong>Info Alert: </strong> Suspicious Transaction Detected on your Account.</p>
+            <span class="card-list-date">just now</span>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon success-icon has-bg"></span>
+            <div class="card-list-content">
+            <p class="card-list-text"><strong>Success: </strong> You've Recorded transaction for $1000 from SWISS Eagle to RED.</p>
+            <span class="card-list-date">2 Days ago</span>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon error-icon has-bg"></span>
+            <div class="card-list-content">
+            <p class="card-list-text"><strong>Error Alert: </strong> You have entered wrong password 2 times.</p>
+            <span class="card-list-date">Last Week</span>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon info-alert-icon has-bg"></span>
+            <div class="card-list-content">
+            <p class="card-list-text"><strong>Info Alert: </strong> You've got Alert for Incoming Transaction.</p>
+            <span class="card-list-date">just now</span>
+            </div>
+            </li>
+            <li>
+            <span class="card-list-icon success-icon has-bg"></span>
+            <div class="card-list-content">
+            <p class="card-list-text"><strong>Success: </strong> You've Recorded transaction for $12000 from SWISS Eagle to RED.</p>
+            <span class="card-list-date">2 Days ago</span>
+            </div>
+            </li>
+            </ul>
+            <a href="#" class="primary-btn full-width marT30">Show More</a>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </main>
+            <!-- Dashboard Main -->
+
+
+
+        </div>
+        <!-- Dashboard Area -->
+
+    </div>
+    <!-- Site Container -->
+
+  
+
+</body>
+
+</html>
+
