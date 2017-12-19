@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Sign In | Banking</title>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/site.css" />
-</head>
+<title>AML Central | SignIn</title>
+<%- include('./partials/scripts') -%>
 
 <body>
 
@@ -25,10 +14,10 @@
         <aside class="login-area-sidebar hidden-xs">
         <div class="login-sidebar-header">
         <h2 class="login-sidebar-heading">Welcome to AML Central</h2>
-        <p class="login-sidebar-text">Enter Login details provided for the Portal</p>
+        <p class="login-sidebar-text">A next-gen platform for AML - Transaction Monitoring; powered by Blockchain technology</p>
         </div>
         <div class="login-sidebar-footer">
-        <a href="#" class="sidebar-footer-text">Learn More</a>
+        <p class="sidebar-footer-text">Blockchain Worx , Singapore</p>
         </div>
         </aside>
         <!-- Login Sidebar -->
@@ -40,7 +29,7 @@
         <a href="signUp" class="primary-btn is-ghost-btn is-rounded">Create Account Request</a>
         </div>
         <div class="login-main-content">
-        <h1 class="form-heading">Sign in to AML Portal</h1>
+        <h1 class="form-heading">Sign in to AML Central</h1>
         <p class="form-description">Enter your details below.</p>
         <form method="post" id="signIn_form" action="/signIn">
             <div class="form login-form">
@@ -76,7 +65,9 @@
         
     </div>
     <!-- Site Container -->
-
+    <div class="visible-xs">
+    <%- include('./partials/footer') -%>
+</div>
 </body>
 
 </html>

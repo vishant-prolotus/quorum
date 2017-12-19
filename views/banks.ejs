@@ -1,3 +1,4 @@
+<title>AML Central | Banks</title>
 <%- include('./partials/scripts') -%>
 
 <body>
@@ -33,6 +34,7 @@
                                     <table class="theme-table responsive-table marT50 marT20-xs">
                                     <thead>
                                     <tr>
+                                    <th>Bank AML ID</th>
                                     <th class="has-head-label from-label">Bank Name</th>
                                     <th>Account No.</th>
                                     <th>Address</th>
@@ -46,9 +48,10 @@
                                     <tbody>
                                     <% for(var i=0;i<output.bankList.length;i++){%>    
                                     <tr>
-                                    <td class="has-cell-label from-label"><%=output.bankList[i].name %></td>
-                                    <td><%=output.bankList[i].account_no %></td>
-                                    <td><%=output.bankList[i].address %></td>
+                                    <td><%=output.bankList[i]._id%></td>
+                                    <td class="has-cell-label from-label capitalize"><%=output.bankList[i].name %></td>
+                                    <td><div class="hash-wrap"><%=output.bankList[i].account_no %></div></td>
+                                    <td><div class="hash-wrap"><%=output.bankList[i].address %></div></td>
                                     <td><%=output.bankList[i].type %></td>
                                     <td class="has-cell-label to-label"><%=output.bankList[i].email %></td>
                                     <% if(output.userType=='admin'){%>
@@ -72,9 +75,7 @@
                                     <a href="bulk-transfer-step3.html" class="primary-btn">Record to Ledger</a>
                                     </div> -->
                                     </div>
-                                    <% if(output.userType=='regulator'){%>
-                                    <input type="button" class="primary-btn marT30" value="AddBank">
-                                    <% } %>
+                                    
                                     <!-- Theme Table -->
 
 
@@ -94,7 +95,7 @@
     </div>
     <!-- Site Container -->
 
-  
+    <%- include('./partials/footer') -%>
 
 </body>
 

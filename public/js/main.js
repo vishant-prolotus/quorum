@@ -9,6 +9,18 @@ $(function () {
         }))
     });
 
+    // Adding space to username
+
+//     var id = $(".username-wrap").text();
+//     var lastChar = id.substr(id.length - 1);
+//     if(lastChar==1){
+//         $(".username-wrap").append("<span class='int has-one'>"+lastChar+"</span>")
+        
+//     }
+//     else {
+//     $(".username-wrap").append("<span class='int'>"+lastChar+"</span>")
+// }
+
     $("#menuTrigger").on("click", function(){
         $("#main-navigation").slideToggle();
     });

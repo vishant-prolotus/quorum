@@ -1,3 +1,4 @@
+<title>AML Central | Transactions</title>
 <%- include('./partials/scripts') -%>
 
 <body>
@@ -18,28 +19,180 @@
                     <div class="row">
                         
                         <div class="col-sm-12">
+
                             <div class="dashboard-card full-view-card">
-                                <% if(output.userType=='bank'){ %>
-                                <!-- <h1 class="dashboard-card-heading text-center">Please Confirm Details for Uploaded Transactions </h1> -->
-                                <% } %>
-                                <!-- Theme Table -->
-                                <div class="theme-table-wrapper">
-                                <h2 class="dashboard-card-heading">Transaction Detail</h2>
-                                <table class="theme-table responsive-table marT50 marT20-xs">
+                            <% if(output.userType=='bank'){ %>
+                            <!-- Tab Navigation -->
+                            <div class="tab-navigation">
+                            <ul class="tab-head has-two-cols">
+                            <li><a class="tab-link active" data-tab="incoming-transaction">Incoming Transaction</a></li>
+                            <li><a class="tab-link" data-tab="outgoing-transaction">Outgoing Transaction</a></li>
+                            </ul>
+                            <div class="tab-content">
+                            
+                                    <div id="incoming-transaction" class="tab-pane active"> 
+                                        <div class="text-right">
+                                            <ul class="list-inline marT30 marB10">
+                                                    <li class="pointer" title="Export to Excel"><img width="25" src="images/excel-icon.svg" alt="Excel Icon" /></li>
+                                                    <li class="pointer" title="Export to PDF"><img width="25" src="images/pdf-icon.svg" alt="PDF Icon" /></li>                                                    
+                                                    </ul> 
+                                                </div>
+                                            <div class="theme-table-wrapper">
+                                                    <table class="theme-table responsive-table">
+                                                    <thead>
+                                                    <tr>
+                                                    <th class="has-head-label from-label">Transaction ID</th>
+                                                    <!-- <th>Sending Bank ID</th> -->
+                                                    <th>Sending Bank Name</th>
+                                                    <!-- <th>Sending Bank Account No.</th> -->
+                                                    <th>Receiving Bank Name</th>
+                                                    <!-- <th>Receiving Bank Account No.</th> -->
+                                                    <th>Transaction Amount</th>
+                                                    <!-- <th>Transaction Type</th> -->
+                                                    <th class="has-head-label to-label">Transaction Date</th>
+                                                    <th>Transaction Status</th>
+                                                    <!-- <th>Notes</th> -->
+                                                    <th>Details</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                    
+                    <% 
+                    if(output.incomingTransactions.length>0){
+                    for(var i=0;i<output.incomingTransactions.length;i++){%>
+                    <tr>
+                    <td><%=output.incomingTransactions[i].transaction_id %></td>
+                    <!-- <td><%=output.incomingTransactions[i].sending_bank_id %></td> -->
+                    <td class="has-cell-label from-label capitalize"><%=output.incomingTransactions[i].sending_bank_name %></td>
+                    <!-- <td><%=output.incomingTransactions[i].sending_bank_acc_no %></td> -->
+                    <td class="has-cell-label from-label capitalize"><%=output.incomingTransactions[i].receiving_bank_name %></td>
+                    <!-- <td><%=output.incomingTransactions[i].receiving_bank_acc_no %></td> -->
+                    <td><%=output.incomingTransactions[i].amount %></td>
+                    <!-- <td class="has-cell-label to-label"><%=output.incomingTransactions[i].transaction_type %></td> -->
+                    <td><%=output.incomingTransactions[i].created_at %></td>
+                    <td <% if(output.incomingTransactions[i].status=='RED'){ %> class='alert-red' <% } %>><%=output.incomingTransactions[i].status%></td>
+                    <!-- <td><%=output.incomingTransactions[i].notes %></td> -->
+                    <td class="has-popup-trigger"><a data-popup="viewMorePopup" class="popup-trigger showPopUpDetail" id="<%=output.incomingTransactions[i].blockchain_tx_id %>">Detail</a></td>
+                    </tr>
+                    
+                    <% }}else{ %>
+                    <tr><td colspan="11">No Record found</td></tr>    
+                    <% }%>
+                    
+                    
+                                                    </tbody>
+                                                    </table>
+                                                    <% if(output.userType=='bank'){ %>
+                                                    <div class="text-center marT30">
+                                                    <!-- bulk-transfer-step3.html -->
+                                                    <!-- <a href="/transaction_success" class="primary-btn">Ok</a> -->
+                                                    </div>
+                                                    <% } %>
+                                                    </div>
+                                                   
+                                    </div>
+
+
+                                    <div id="outgoing-transaction" class="tab-pane">
+                                            
+                                                                                <div class="theme-table-wrapper">
+                                                                                        <div class="text-right">
+                                                                                                <ul class="list-inline marT30 marB10">
+                                                                                                        <li class="pointer" title="Export to Excel"><img width="25" src="images/excel-icon.svg" alt="Excel Icon" /></li>
+                                                                                                        <li class="pointer" title="Export to PDF"><img width="25" src="images/pdf-icon.svg" alt="PDF Icon" /></li>                                                    
+                                                                                                        </ul> 
+                                                                                                    </div>
+                                                                                        <table class="theme-table responsive-table">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                        <th class="has-head-label from-label">Transaction ID</th>
+                                                                                        <!-- <th>Sending Bank ID</th> -->
+                                                                                        <th>Sending Bank Name</th>
+                                                                                        <!-- <th>Sending Bank Account No.</th> -->
+                                                                                        <th>Receiving Bank Name</th>
+                                                                                        <!-- <th>Receiving Bank Account No.</th> -->
+                                                                                        <th>Transaction Amount</th>
+                                                                                        <!-- <th>Transaction Type</th> -->
+                                                                                        <th class="has-head-label to-label">Transaction Date</th>
+                                                                                        <th>Transaction Status</th>
+                                                                                        <!-- <th>Notes</th> -->
+                                                                                        <th>Details</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                        
+                                                        <% 
+                                                        if(output.outgoingTransactions.length>0){
+                                                        for(var i=0;i<output.outgoingTransactions.length;i++){%>
+                                                        <tr>
+                                                        <td><%=output.outgoingTransactions[i].transaction_id %></td>
+                                                        <!-- <td><%=output.outgoingTransactions[i].sending_bank_id %></td> -->
+                                                        <td class="has-cell-label from-label capitalize"><%=output.outgoingTransactions[i].sending_bank_name %></td>
+                                                        <!-- <td><%=output.outgoingTransactions[i].sending_bank_acc_no %></td> -->
+                                                        <td class="has-cell-label from-label capitalize"><%=output.outgoingTransactions[i].receiving_bank_name %></td>
+                                                        <!-- <td><%=output.outgoingTransactions[i].receiving_bank_acc_no %></td> -->
+                                                        <td><%=output.outgoingTransactions[i].amount %></td>
+                                                        <!-- <td class="has-cell-label to-label"><%=output.outgoingTransactions[i].transaction_type %></td> -->
+                                                        <td><%=output.outgoingTransactions[i].created_at %></td>
+                                                        <td <% if(output.outgoingTransactions[i].status=='RED'){ %> class='alert-red' <% } %>><%=output.outgoingTransactions[i].status%></td>
+                                                        <!-- <td><%=output.outgoingTransactions[i].notes %></td> -->
+                                                        <td class="has-popup-trigger"><a data-popup="viewMorePopup" class="popup-trigger showPopUpDetail" id="<%=output.outgoingTransactions[i].blockchain_tx_id %>">Detail</a></td>
+                                                        </tr>
+                                                        
+                                                        <% }}else{ %>
+                                                        <tr><td colspan="11">No Record found</td></tr>    
+                                                        <% }%>
+                                                        
+                                                        
+                                                                                        </tbody>
+                                                                                        </table>
+                                                                                        <% if(output.userType=='bank'){ %>
+                                                                                        <div class="text-center marT30">
+                                                                                        <!-- bulk-transfer-step3.html -->
+                                                                                        <!-- <a href="/transaction_success" class="primary-btn">Ok</a> -->
+                                                                                        </div>
+                                                                                        <% } %>
+                                                                                        </div>
+                                                                                       
+                                                                        </div>
+
+
+
+
+
+
+                            
+                            </div>
+                            </div>
+                            <% } %>
+                            <!-- Tab Navigation -->
+
+
+                             <!-- Regulator and Admin list -->
+                    <% if((output.userType=='admin') || (output.userType=='regulator') ){ %>
+                        <h1 class="dashboard-card-heading text-center" >Transactions</h1>
+                        <div class="text-right">
+                                <ul class="list-inline marT50 marT20-xs marB10">
+                                        <li class="pointer" title="Export to Excel"><img width="25" src="images/excel-icon.svg" alt="Excel Icon" /></li>
+                                        <li class="pointer" title="Export to PDF"><img width="25" src="images/pdf-icon.svg" alt="PDF Icon" /></li>                                                    
+                                        </ul> 
+                                    </div>
+                        <div class="theme-table-wrapper">
+                                <table class="theme-table responsive-table">
                                 <thead>
                                 <tr>
                                 <th class="has-head-label from-label">Transaction ID</th>
                                 <!-- <th>Sending Bank ID</th> -->
-								<th>Sending Bank Name</th>
-								<!-- <th>Sending Bank Account No.</th> -->
-								<th>Receiving Bank Name</th>
-								<!-- <th>Receiving Bank Account No.</th> -->
-								<th>Transaction Amount</th>
-                                <th>Transaction Type</th>
-                                <!-- <th class="has-head-label to-label">Transaction Date</th> -->
+                                <th>Sending Bank Name</th>
+                                <!-- <th>Sending Bank Account No.</th> -->
+                                <th>Receiving Bank Name</th>
+                                <!-- <th>Receiving Bank Account No.</th> -->
+                                <th>Transaction Amount</th>
+                                <!-- <th>Transaction Type</th> -->
+                                <th class="has-head-label to-label">Transaction Date</th>
                                 <th>Transaction Status</th>
                                 <!-- <th>Notes</th> -->
-                                <th>View</th>
+                                <th>Details</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -48,18 +201,18 @@
 if(output.transactionsList.length>0){
 for(var i=0;i<output.transactionsList.length;i++){%>
 <tr>
-<td><%=output.transactionsList[i].blockchain_tx_id %></td>
+<td><%=output.transactionsList[i].transaction_id %></td>
 <!-- <td><%=output.transactionsList[i].sending_bank_id %></td> -->
-<td class="has-cell-label from-label"><%=output.transactionsList[i].sending_bank_name %></td>
+<td class="has-cell-label from-label capitalize"><%=output.transactionsList[i].sending_bank_name %></td>
 <!-- <td><%=output.transactionsList[i].sending_bank_acc_no %></td> -->
-<td class="has-cell-label from-label"><%=output.transactionsList[i].receiving_bank_name %></td>
+<td class="has-cell-label from-label capitalize"><%=output.transactionsList[i].receiving_bank_name %></td>
 <!-- <td><%=output.transactionsList[i].receiving_bank_acc_no %></td> -->
 <td><%=output.transactionsList[i].amount %></td>
-<td class="has-cell-label to-label"><%=output.transactionsList[i].transaction_type %></td>
-<!-- <td><%=output.transactionsList[i].transaction_date %></td> -->
+<!-- <td class="has-cell-label to-label"><%=output.transactionsList[i].transaction_type %></td> -->
+<td><%=output.transactionsList[i].created_at %></td>
 <td <% if(output.transactionsList[i].status=='RED'){ %> class='alert-red' <% } %>><%=output.transactionsList[i].status%></td>
 <!-- <td><%=output.transactionsList[i].notes %></td> -->
-<td class="has-popup-trigger"><p data-popup="viewMorePopup" class="popup-trigger showPopUpDetail" id="<%=output.transactionsList[i].blockchain_tx_id %>">View</p></td>
+<td class="has-popup-trigger"><a data-popup="viewMorePopup" class="popup-trigger showPopUpDetail" id="<%=output.transactionsList[i].blockchain_tx_id %>">Detail</a></td>
 </tr>
 
 <% }}else{ %>
@@ -69,21 +222,15 @@ for(var i=0;i<output.transactionsList.length;i++){%>
 
                                 </tbody>
                                 </table>
-                                <% if(output.userType=='bank'){ %>
-                                <div class="text-center marT30">
-                                <!-- bulk-transfer-step3.html -->
-                                <!-- <a href="/transaction_success" class="primary-btn">Ok</a> -->
+                               
                                 </div>
-                                <% } %>
-                                </div>
-                                <!-- Theme Table -->
-
+                    
+                            <% }%>
                             </div>
                         </div>
                     </div>
 
-
-                    
+               
 
 
 
@@ -128,6 +275,10 @@ for(var i=0;i<output.transactionsList.length;i++){%>
                     <p class="text-group-content" id="transaction_amount"></p>
                     </div>
                     <div class="popup-text-group">
+                        <h4 class="text-group-heading">Currency</h4>
+                        <p class="text-group-content" id="currency"></p>
+                    </div>
+                    <div class="popup-text-group">
                     <h4 class="text-group-heading">Transaction Type</h4>
                     <p class="text-group-content" id="transaction_type"></p>
                     </div>
@@ -156,7 +307,7 @@ for(var i=0;i<output.transactionsList.length;i++){%>
     <!-- Scripts -->
 
     <!-- Scripts -->
-
+    <%- include('./partials/footer') -%>
 </body>
 
 </html>
@@ -167,36 +318,12 @@ for(var i=0;i<output.transactionsList.length;i++){%>
 </style>
 
 <style>
-        .viewMorePopup  {
-            max-height: 500px;
-            overflow-y: scroll;
-        }
-        .popup-text-group {
-            border-bottom: 1px solid #ccc;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .popup-text-group:last-child {
-            border-bottom: none;
-        }
-        .popup-text-group .text-group-heading {
-            font-weight: 600;
-            color: #087d8e;
-        }
-        .popup-text-group .text-group-heading, .popup-text-group .text-group-content {
-            margin: 0;
-            padding: 15px 0;
-            width: 50%;
-            word-break: break-all;
-            word-wrap: break-word;
-            font-size: 15px;
-        }
+       
     </style>
 
     <script>
-    $('.showPopUpDetail').click(function(){
-        console.log($(this).attr('id'));
+$('.showPopUpDetail').click(function(){
+console.log($(this).attr('id'));
 $.ajax({
 type:"GET",
 cache:false,
@@ -213,7 +340,7 @@ $('#Transaction_ID').html(result.transaction_id);
 
 //if(result.status=='GREEn')
 $('#transaction_status').html(result.status);
-$('#transaction_date').html(result.transaction_date);
+$('#transaction_date').html(result.created_at);
 $('#transaction_type').html(result.transaction_type);
 $('#transaction_amount').html(result.amount);
 $('#receiving_bank_acc').html(result.receiving_bank_acc_no);
@@ -221,6 +348,7 @@ $('#receiving_bank_name').html(result.receiving_bank_name);
 $('#sending_bank_account').html(result.sending_bank_acc_no);
 $('#sending_bank_name').html(result.sending_bank_name);
 $('#sending_bank_id').html(result.sending_bank_id);
+$('#currency').html(result.currency);
 },
 error:function(err){
 console.log(err);

@@ -303,6 +303,8 @@ Forms
     font-size: 16px;
 }
 
+.select2-container { width: 100% !important; }
+
 .form .form-control:focus {
     border-color: #087d8e;
 }
@@ -562,6 +564,16 @@ Tab Navigation
     -moz-border-radius: 3px;
 }
 
+.tab-navigation .tab-head.has-two-cols {
+    max-width: 520px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.tab-navigation .tab-head.has-two-cols li {
+    width: 50%;
+}
+
 .money-transfer-tabs {
     max-width: 520px;
     margin-right: auto;
@@ -598,7 +610,7 @@ Login Area
 .login-area .login-area-sidebar {
     width: 37%;
     color: #fff;
-    padding: 65px 45px;
+    padding: 65px 25px 15px;
     background: url(../images/login-sidebar-bg.jpg) no-repeat;
     background-size: cover;
     background-position: center center;
@@ -623,10 +635,9 @@ Login Area
 }
 
 .login-area .login-sidebar-footer .sidebar-footer-text {
-    color: #ff;
-    text-decoration: underline;
     color: #fff;
-    display: none;
+    margin-bottom: 0;
+
 }
 
 .login-area .login-area-main {
@@ -676,7 +687,7 @@ Login Area
 }
 
 .login-area .login-sidebar-text {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 300;
     line-height: 1.5;
 }
@@ -744,6 +755,25 @@ Dashboard Area
     margin-left: 40px;
     color: #087d8e;
     position: relative;
+}
+
+.username-wrap {
+    position: relative;
+}
+
+.username-wrap .int {
+    display: inline-block;
+    background: #fff;
+    right: -1px;
+    position: absolute;
+    width: 10px;
+    top: 1px;
+    text-align: right;
+}
+
+.username-wrap .int.has-one {
+    right: -3px;
+    width: 7px;
 }
 
 .dashboard-area .user-panel .user-panel-item:first-child {
@@ -843,6 +873,10 @@ Main Navigation
     background-image: url(../images/money-transfer-icon.svg);
 }
 
+.dashboard-header .admin-icon.nav-icon {
+    background-image: url(../images/admin-icon.svg);
+}
+
 .dashboard-header .logout-icon.nav-icon {
     background-image: url(../images/logout-icon.svg);
     width: 36px;
@@ -853,7 +887,7 @@ Main Navigation
 
 .dashboard-main {
     padding-top: 30px;
-    padding-bottom: 30px;
+    padding-bottom: 50px;
 }
 
 .dashboard-main .dashboard-main-heading,
@@ -863,7 +897,8 @@ Main Navigation
 }
 
 .dashboard-main .dashboard-main-heading {
-    margin-bottom: 5px
+    margin-bottom: 5px;
+    font-size: 24px;
 }
 
 .dashboard-main .dashboard-main-btn {
@@ -949,7 +984,7 @@ Dashboard Tabs
     justify-content: space-between;
     margin-right: 20px;
     margin-bottom: 20px;
-    padding: 15px 15px 15px 50px;
+    padding: 12px 12px 12px 55px;
     text-align: right;
     border-radius: 0;
     -webkit-border-radius: 0;
@@ -958,13 +993,13 @@ Dashboard Tabs
 
 .dashboard-card-tabs .tab-item-heading {
     text-transform: uppercase;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: normal;
     margin-bottom: 5px;
 }
 
 .dashboard-card-tabs .tab-item-val {
-    font-size: 24px;
+    font-size: 21px;
     display: block;
     line-height: 1;
 }
@@ -985,6 +1020,7 @@ Selectbox
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #087d8e;
     text-indent: 65px;
+    text-transform: capitalize;
 }
 
 .select2-container--default .select2-selection--single {
@@ -1017,6 +1053,7 @@ Selectbox
 
 .select2-container--open .select2-dropdown {
     border-color: #e6e6e6;
+    text-transform: capitalize;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
@@ -1038,6 +1075,7 @@ Selectbox
     color: #555555;
     opacity: 0.7;
     font-weight: 500;
+
 }
 
 .form .select2-container--default .select2-selection--single {
@@ -1119,6 +1157,32 @@ Popups
     left: 0;
     top: 0;
     z-index: 9;
+}
+
+/* .viewMorePopup  {
+    max-height: 500px;
+    overflow-y: scroll;
+} */
+.popup-text-group {
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.popup-text-group:last-child {
+    border-bottom: none;
+}
+.popup-text-group .text-group-heading {
+    font-weight: 600;
+    color: #087d8e;
+}
+.popup-text-group .text-group-heading, .popup-text-group .text-group-content {
+    margin: 0;
+    padding: 15px 0;
+    width: 50%;
+    word-break: break-all;
+    word-wrap: break-word;
+    font-size: 15px;
 }
 
 /*
@@ -1279,6 +1343,7 @@ Dashboard Cards List
     background-color: #087d8e;
     background-repeat: no-repeat;
     background-position: left center;
+    background-size: 100%;
 }
 
 .dashboard-card-list .card-list-date {
@@ -1319,6 +1384,12 @@ Dashboard Cards List
     background: url(../images/clock-icon.jpg) no-repeat left center;
 }
 
+.dashboard-card-list.theme2 .card-list-icon {
+    width: 28px;
+    height: 28px;
+    top: 24px;
+}
+
 .dashboard-card-list .card-list-icon.has-bg {
     background-color: transparent !important;
     left: 0;
@@ -1333,15 +1404,15 @@ Dashboard Cards List
 }
 
 .dashboard-card-list .info-alert-icon {
-    background-image: url(../images/info-alert-icon.jpg);
+    background-image: url(../images/info-alert-icon.svg);
 }
 
 .dashboard-card-list .error-icon {
-    background-image: url(../images/error-alert-icon.jpg);
+    background-image: url(../images/error-alert-icon.svg);
 }
 
 .dashboard-card-list .success-icon {
-    background-image: url(../images/success-icon.jpg);
+    background-image: url(../images/success-icon.svg);
 }
 
 
@@ -1356,6 +1427,12 @@ Useful Generic Classes
     -moz-transition: 350ms ease-in-out;
 }
 
+.pointer {
+    cursor: pointer;
+}
+.capitalize {
+    text-transform: capitalize;
+}
 .marT40 {
     margin-top: 40px;
 }
@@ -1366,6 +1443,10 @@ Useful Generic Classes
 
 .marT30 {
     margin-top: 30px;
+}
+
+.marB10 {
+    margin-bottom: 10px;
 }
 
 .padB0 {
@@ -1459,6 +1540,24 @@ Useful Generic Classes
     cursor: pointer;
 }
 
+
+/*
+Footer
+*/
+
+#footer {
+    background: #087d8e;
+    padding: 15px 0;
+    color: #fff;
+    font-size: 14px;
+}
+
+#footer .copyright-text {
+    margin: 0;
+}
+
+#footer a { color: #fff; }
+
 /* Media Queries */
 
 @media (min-width: 1600px) {
@@ -1495,6 +1594,10 @@ Useful Generic Classes
         font-size: 15px;
     }
 
+    .dashboard-area .user-panel .user-panel-item.username {
+        text-transform: capitalize;
+    }
+
     #main-navigation > ul > li:first-child {
         margin-left: 10px;
     }
@@ -1510,10 +1613,20 @@ Useful Generic Classes
         text-align: right;
     }
     .login-area .login-area-main {
-        padding: 30px 35px 30px 45px;
+        padding: 30px 25px 30px 35px;
     }
     .login-form {
         width: 400px;
+    }
+    .login-area .login-main-header .header-text {
+        margin-right: 10px;
+    }
+    .login-area .login-main-header {
+        right: 15px;
+    }
+    .login-area .login-main-header .primary-btn {
+        padding-left: 20px;
+        padding-right: 20px;
     }
     .login-area .login-area-sidebar {
         padding: 50px 30px;
@@ -1577,6 +1690,9 @@ Useful Generic Classes
     .marT20-xs {
         margin-top: 20px;
     }
+    .text-left-xs {
+        text-align: left;
+    }
     #main-navigation {
         top: 41px;
     }
@@ -1597,9 +1713,10 @@ Useful Generic Classes
     }
     .login-area .login-main-header {
         position: static;
+        text-align: center;
     }
     .login-area .login-main-header .header-text {
-        margin-right: 5px;
+        margin-right: 0;
     }
     .login-area .login-main-header .primary-btn {
         padding: 10px 35px;
@@ -1617,7 +1734,7 @@ Useful Generic Classes
         top: 15px;
     }
     .dashboard-area .user-panel {
-        margin-top: 3px;
+        margin-top: 7px;
     }
 
     .dashboard-area .logo {

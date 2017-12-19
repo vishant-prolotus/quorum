@@ -1,2 +1,0 @@
-transaction_id,Nature_of_transaction,sending_bank_name,sending_bank_Id,sending_bank_acc_no,receiving_bank_name,receiving_bank_id,receiving_bank_acc_no,amount,transaction_type,transaction_date,transaction_status,notes
-54,,bank1,0x180893a0ec847fa8c92786791348d7d65916acbb,bank2,bank3,,0xf9a2cb34b6b5fd7a2ac0c2e9b2b9406d6daffbd4,38.94,cash,now,1,Notes

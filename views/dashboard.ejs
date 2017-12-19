@@ -1,3 +1,5 @@
+
+<title>AML Central | Dashboard</title>
 <%- include('./partials/scripts') -%>
 
     <body>
@@ -16,11 +18,13 @@
                     <main class="dashboard-main">
                             <div class="container">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <h1 class="dashboard-main-heading">Dashboard</h1>
-                                        <p class="dashboard-main-tagline">You are in the main panel</p>
-                                        <a href="#" class="primary-btn dashboard-main-btn is-small hide">+ <span class="hidden-xs"> Add Modules</span></a>
+                                    <div class="col-md-6">
+                                        <h1 class="dashboard-main-heading">Dashboard </h1>
                                     </div>
+                                    <div class="col-md-6 text-right text-left-xs">
+                                    <p class="dashboard-main-tagline">You are in the main panel</p>
+                                    </div>
+                                                                            
                                     <div class="col-md-12">
                                         <div class="dashboard-card summary-card">
                                             <div class="dashboard-card-header">
@@ -64,8 +68,9 @@
                                                      <!-- <img src="images/chart-img.jpg" alt="Chart" /> -->
 
 
-                                                     <canvas id="myChart" style="width: 100%; height: 500px"></canvas>
-                                                 </div>
+                                                     <canvas id="myChart" style="width: 100%; height: 400px"></canvas>
+                                                   
+                                                    </div>
                                         </div>
             
                                         <!-- <div class="dashboard-card summary-card">
@@ -85,10 +90,16 @@
                                             </div>
                                         </div> -->
                                     </div>
-                                    <div class="col-md-6 col-lg-5">
-                                        <div class="dashboard-card summary-card">
+                                    <div class="col-md-6">
+                                        <div class="dashboard-card reports-card">
                                             <div class="dashboard-card-header">
-                                                <h2 class="dashboard-card-heading">Your Txns.</h2>
+                                                <h2 class="dashboard-card-heading">
+                                                    <% if(output.userType!='bank'){ %>
+                                                    Transaction Reports.
+                                                    <% }else{ %>
+                                                        Your Transactions
+                                                    <% } %>
+                                                </h2>
                                                 
                                                 <ul class="card-filter-list list-inline ">
                                                     <li>
@@ -103,7 +114,7 @@
 
                                                         </div>
                                                     </li>
-                                                    <% if(output.userType!='bank'){ %>                                                <li>
+                                                <% if(output.userType!='bank'){ %>                                                <li>
 <div class="dashboard-card-filter sort-by-filter">
 
 <h6 class="filter-heading">Sort By.</h6>
@@ -127,7 +138,7 @@
                                                     <div class="accordion-block-heading"> 
                                                             <span class="card-list-icon" style="background: #22b5d0">F</span>
                                                             
-                                                    <span class="card-list-date"><%= output.transactions[i].transaction_date%></span>
+                                                    <span class="card-list-date"><%= output.transactions[i].created_at%></span>
                                                     <div class="card-list-content">
                                                         <h6 class="card-list-heading"><%= output.transactions[i].amount%></h6>
                                                         <p class="card-list-text hash-wrap">Transfer Order No. <%= output.transactions[i].blockchain_tx_id_hash%></p>
@@ -180,27 +191,59 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-7 col-md-6">
+                                    <div class="col-md-6">
                                             <div class="dashboard-card summary-card">
                                                 <div class="dashboard-card-header">
-                                                    <h2 class="dashboard-card-heading">Your Incoming Alerts</h2>
+                                                    <h2 class="dashboard-card-heading">
+                                                        <% if(output.userType!='bank'){ %>
+                                                        Transaction Alerts
+                                                        <% }else{ %>
+                                                        Your Incoming Alerts
+                                                        <% } %>
+                                                    </h2>
+                                                    <div class="dashboard-card-filter text-right text-left-xs">
+                                                    <ul class="list-inline">
+                                                    <li class="pointer" title="Export to Excel"><img width="25" src="images/excel-icon.svg" alt="Excel Icon" /></li>
+                                                    <li class="pointer" title="Export to PDF"><img width="25" src="images/pdf-icon.svg" alt="PDF Icon" /></li>                                                    
+                                                    </ul>    
+
+                                                    </div> 
                                                 </div>
                                                 <div class="dashboard-card-content">
-                                                    <ul class="dashboard-card-list theme2 list-items-limiter">
-                                                        <li>
-                                                            <span class="card-list-icon info-alert-icon has-bg"></span>
-                                                            <div class="card-list-content">
-                                                            <p class="card-list-text" style="color:red;"><strong>Info Alert: </strong> <%=output.redError%>   Suspicious Transactions Detected on Regular Account.</p>
-                                                                <span class="card-list-date">just now</span>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <span class="card-list-icon success-icon has-bg"></span>
-                                                            <div class="card-list-content">
-                                                                <p class="card-list-text" style="color:green;"><strong>Success: </strong>   <%=output.greenError%>   Successfull transaction  detected.</p>
-                                                                <span class="card-list-date">2 Days ago</span>
-                                                            </div>
-                                                        </li>
+                                                    <ul class="dashboard-card-list theme2 list-items-limiter has-popup-trigger">
+                                                        
+<%
+if(output.redTransactionsList.length>0){
+for(var i=0;i<output.redTransactionsList.length;i++){%>                                                       
+<li data-popup="viewMorePopup" id="<%=output.redTransactionsList[i].blockchain_tx_id%>" class="popup-trigger showPopUpDetail">
+<span class="card-list-icon info-alert-icon has-bg"></span>
+
+<div class="card-list-content">
+
+<p class="card-list-text info-alert-class info_alert popup-trigger"  style="color:red;">
+<strong>Info Alert: </strong> 
+  Suspicious Transactions Detected on Regular Account.</p>
+<span class="card-list-date">just now</span>
+</div>
+
+</li>
+
+<% }}else{ %>  
+<% }%>    
+<%
+if(output.greenTransactionsList.length>0){
+for(var i=0;i<output.greenTransactionsList.length;i++){%>     
+<li data-popup="viewMorePopup" id="<%=output.greenTransactionsList[i].blockchain_tx_id%>" class="showPopUpDetail popup-trigger">
+<span class="card-list-icon success-icon has-bg"></span>
+<div class="card-list-content">
+<p class="card-list-text info-alert-class success_alert popup-trigger" data-popup="info_success_popup" style="color:green;">
+<strong>Success: </strong>Successfull transaction  detected.</p>
+<span class="card-list-date">2 Days ago</span>
+</div>
+</li>
+<% }}else{ %>  
+<% }%>
+                    
                                                         <!-- <li>
                                                             <span class="card-list-icon error-icon has-bg"></span>
                                                             <div class="card-list-content">
@@ -230,7 +273,7 @@
                     <!-- Popups -->
 
                     <!-- Blocks Popup -->
-                    <div class="blocksPopup site-popup fs-overlay-popup">
+                    <div class="blocksPopup site-popup fs-overlay-popup ">
                             <a class="site-popup-close">Close</a>
                             <div class="site-popup-content">
                             <!-- Theme Table -->
@@ -250,7 +293,7 @@
                 for(var i=0;i<output.transactionsList.length;i++){%>
                                                                
                                                 <tr>
-                <td><%=output.transactionsList[i].transaction_date%></td>
+                <td><%=output.transactionsList[i].created_at%></td>
                 <td><a class="hash-wrap"><%=output.transactionsList[i].blockchain_tx_id_hash%></a></td>
                 <td>1</td>
                 </tr>
@@ -335,6 +378,137 @@
                     <!-- Queued Txns Popup -->
 
 
+                    <!-- info Alert popup -->
+                    <div class="site-popup fs-overlay-popup  info_success_popup" style="display: none;" id="success-alert-popup">
+                        <a class="site-popup-close">Close</a>
+                        <div class="scroll-wrapper site-popup-content custom-scroller scrollbar-inner" style="position: relative;"><div class="site-popup-content custom-scroller scrollbar-inner scroll-content scroll-scrolly_visible" style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 400px;">
+                            <table class="theme-table responsive-table">
+                                <thead>
+                                <tr>
+                                <th class="has-head-label from-label">Transaction ID</th>
+                                <th>Transaction Amount</th>
+                                <th>Transaction Date</th>
+                               
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <%
+                                if(output.greenTransactionsList.length>0){
+                                for(var i=0;i<output.greenTransactionsList.length;i++){%>
+
+                                
+                                <tr>
+                                <td><%=output.greenTransactionsList[i].transaction_id%></td>
+                                <td><%=output.greenTransactionsList[i].amount%></td>
+                                <td><%=output.greenTransactionsList[i].created_at%></td>
+                                </tr>
+                                <% }}else{ %>
+                                <tr><td colspan="2">No Transaction found</td></tr>    
+                                <% }%>
+
+                                </tbody>
+                                </table>
+
+                        </div>
+                        <div class="scroll-element scroll-x scroll-scrolly_visible"><div class="scroll-element_outer"><div class="scroll-element_size"></div><div class="scroll-element_track"></div><div class="scroll-bar" style="width: 88px;"></div></div></div><div class="scroll-element scroll-y scroll-scrolly_visible"><div class="scroll-element_outer"><div class="scroll-element_size"></div><div class="scroll-element_track"></div><div class="scroll-bar" style="height: 283px; top: 0px;"></div></div></div></div>
+                        </div>
+
+                        <div class="site-popup fs-overlay-popup info_red_popup" style="display: none;" id="info-alert-popup">
+                                <a class="site-popup-close">Close</a>
+                                
+                                <div class="scroll-wrapper site-popup-content custom-scroller scrollbar-inner" style="position: relative;"><div class="site-popup-content custom-scroller scrollbar-inner scroll-content scroll-scrolly_visible" style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 400px;">
+                                    
+                                    <table class="theme-table responsive-table">
+                                        <thead>
+                                        <tr>
+                                        <th class="has-head-label from-label">Transaction ID</th>
+                                        <th>Transaction Amount</th>
+                                        <th>Transaction Date</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        
+                                        <%
+                                        if(output.redTransactionsList.length>0){
+                                        for(var i=0;i<output.redTransactionsList.length;i++){%>
+
+                                        <tr>
+                                        <td><%=output.redTransactionsList[i].transaction_id%></td>
+                                        <td><%=output.redTransactionsList[i].amount%></td>
+                                        <td><%=output.redTransactionsList[i].created_at%></td>
+                                        </tr>
+                                        <% }}else{ %>
+                                        <tr><td colspan="2">No Transaction found</td></tr>    
+                                        <% }%>
+        
+                                        </tbody>
+                                        </table>
+        
+                                </div>
+                                <div class="scroll-element scroll-x scroll-scrolly_visible"><div class="scroll-element_outer"><div class="scroll-element_size"></div><div class="scroll-element_track"></div><div class="scroll-bar" style="width: 88px;"></div></div></div><div class="scroll-element scroll-y scroll-scrolly_visible"><div class="scroll-element_outer"><div class="scroll-element_size"></div><div class="scroll-element_track"></div><div class="scroll-bar" style="height: 283px; top: 0px;"></div></div></div></div>
+                                </div>
+
+
+                                <div class="viewMorePopup site-popup fs-overlay-popup">
+                                        <a class="site-popup-close">Close</a>
+                                        <div class="site-popup-content custom-scroller scrollbar-inner">
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Transaction ID</h4>
+                                        <p class="text-group-content" id="Transaction_ID"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Sending Bank ID</h4>
+                                        <p class="text-group-content" id="sending_bank_id"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Sending Bank Name</h4>
+                                        <p class="text-group-content capitalize" id="sending_bank_name"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Sending Bank Account No.</h4>
+                                        <p class="text-group-content " id="sending_bank_account"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Receiving Bank Name</h4>
+                                        <p class="text-group-content capitalize"id="receiving_bank_name"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Receiving Bank Account No.</h4>
+                                        <p class="text-group-content" id="receiving_bank_acc"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Transaction Amount</h4>
+                                        <p class="text-group-content" id="transaction_amount"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                            <h4 class="text-group-heading">Currency</h4>
+                                            <p class="text-group-content" id="currency"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Transaction Type</h4>
+                                        <p class="text-group-content" id="transaction_type"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Transaction Date</h4>
+                                        <p class="text-group-content" id="transaction_date"></p>
+                                        </div>
+                                        <div class="popup-text-group">
+                                        <h4 class="text-group-heading">Transaction Status</h4>
+                                        <p class="text-group-content " id="transaction_status"></p>
+                                        </div>
+                                        </div>
+                                        </div>
+                                       
+                                        <!-- Blocks Popup -->
+                    
+                    
+                                
+                    
+                    
+
+                        
+
+
                     <!-- Popups -->
 
             </div>
@@ -342,6 +516,11 @@
 
         </div>
         <!-- Site Container -->
+
+        <!-- Footer -->
+        <%- include('./partials/footer') -%>
+     
+        <!-- Footer -->
 
         <!-- Scripts -->
 
@@ -366,8 +545,9 @@
             data: {
                 labels:[<%=output.graphValue.labels%>],
                 datasets: [{
-                    label: 'Transactions Data',
+                    label: 'X- axis reference to Transaction date and Y-axis reference to Transaction count on the particular date',
                     data: [<%=output.graphValue.dataSet%>],
+                    
                     backgroundColor: [
                         'rgba(8, 125, 142, 0.2)',
                     ],
@@ -384,7 +564,50 @@
                             beginAtZero:true
                         }
                     }]
-                }
+                },
+                title: {
+            display: true,
+            text: ''
+        },
+        legend: {
+                    display: !0,
+                    position: "bottom"
+        }
             }
         });
+
+
+$('.showPopUpDetail').click(function(){
+console.log($(this).attr('id'));
+$.ajax({
+type:"GET",
+cache:false,
+url:"/transactionsDetails",
+data:{request:$(this).attr('id')}, 
+success:function(result){
+console.log(result);
+result=result[0];                                
+$('#Transaction_ID').html(result.transaction_id);
+$('#transaction_status').html(result.status);
+$('#transaction_date').html(result.created_at);
+$('#transaction_type').html(result.transaction_type);
+$('#transaction_amount').html(result.amount);
+$('#receiving_bank_acc').html(result.receiving_bank_acc_no);
+$('#receiving_bank_name').html(result.receiving_bank_name);
+$('#sending_bank_account').html(result.sending_bank_acc_no);
+$('#sending_bank_name').html(result.sending_bank_name);
+$('#sending_bank_id').html(result.sending_bank_id);
+$('#currency').html(result.currency);
+},
+error:function(err){
+console.log(err);
+}
+})
+
+
+    });
+
         </script>
+        <style>
+        .info-alert-class{ cursor: pointer;}
+        </style>

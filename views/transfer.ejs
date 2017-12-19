@@ -1,5 +1,5 @@
 
-
+<title>AML Central | Manage Transactions</title>
  <%- include('./partials/scripts') -%>
  
  <body>
@@ -22,24 +22,22 @@
                          <div class="row">
                              <div class="col-sm-12">
                                  <div class="dashboard-card full-view-card">
-                                     <h1 class="dashboard-card-heading text-center">Transactions
- 
-                                     </h1>
+                                     
                                      <div class="text-center">
                                         <img id="loader" class="image-loader"  src="images/loader.gif">
 
                                      </div>
      
                                      <!-- Tab Navigation -->
-                                     <div class="tab-navigation money-transfer-tabs marT30">
+                                     <div class="tab-navigation money-transfer-tabs">
                                          <ul class="tab-head text-center">
                                              <li><a class="tab-link active" data-tab="single-transaction">Single Transaction</a></li>
                                              <li><a class="tab-link" data-tab="bulk-transaction">Bulk Transaction</a></li>
                                          </ul>
                                          <%= success_msg %>
-                                         <%= error_msg %>
+                                        
                                          <ul class="error-msg">
-
+                                                <%= error_msg %>
                                          </ul>
                                          <% for(var i = 0; i < errors.length - 1; i++){ %>
                                              <li> <%= errors[i].msg %> </li>
@@ -47,6 +45,7 @@
                                          <div class="tab-content">
                                          <form method="post" action="transfer">   
                                              <div id="single-transaction" class="tab-pane active">
+                                                    <h2 class="dashboard-card-heading marT30">Input Transactions</h2>
                                                      <div class="form marT30">
                                                      <div class="form-group">
                                                          <label class="form-group-label">Transaction ID(auto)</label>
@@ -56,14 +55,14 @@
                                                      <div class="form-group">
                                                             <label class="form-group-label">Nature of Transaction</label>
                                                             <select name="nature_of_transaction" class="form-control theme-selectbox">
-                                                            <option value="Cash">Incoming</option>
-                                                            <option value="Cheque">Outgoing</option>
+                                                            <option value="incoming">Incoming</option>
+                                                            <option value="outgoing">Outgoing</option>
                                                             </select>
                                                     </div>
                                                      
                                                      <div class="form-group">
                                                              <label class="form-group-label">Sending Bank Name</label>
-                                                             <input type="text" name="sending_bank_name" class="form-control" placeholder="Enter bank account number" value="<%=output.name%>" />
+                                                             <input type="text" name="sending_bank_name" readonly="true" class="form-control capitalize" placeholder="Enter bank account number" value="<%=output.name%>" />
                                                     </div>
                                                          <div class="form-group">
                                                                 <label class="form-group-label">Sending Bank AML ID(auto) </label>
@@ -71,12 +70,12 @@
                                                           </div>
                                                    <div class="form-group">
                                                          <label class="form-group-label">Sending Bank Account Number</label>
-                                                         <input type="text" name="sending_bank_acc_no" class="form-control" placeholder="Enter bank account number" value="<%=output.address%>" />
+                                                         <input type="text" name="sending_bank_acc_no" value="<%=sending_bank_acc_no%>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" placeholder="Enter bank account number" value="" />
                                                      </div>
                                                  
  
                                                      <div class="form-group">
-                                                             <label class="form-group-label">Receiving Bank Name</label>
+                                                             <label class="form-group-label ">Receiving Bank Name</label>
                  
                                                              <select class="form-control theme-selectbox" name="receiving_bank_name">
                                                                    
@@ -91,14 +90,19 @@
                                                             </div>
                                                      <div class="form-group">
                                                          <label class="form-group-label">Receiving Bank Account Number</label>
-                                                         <input type="tel" name="receiving_bank_acc_no" class="form-control" placeholder="Enter receiving account number" />
+                                                         <input type="tel" name="receiving_bank_acc_no" value="<%=receiving_bank_acc_no%>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" placeholder="Enter receiving account number" />
                                                      </div>
  
                                                      
                                                      <div class="form-group">
                                                          <label class="form-group-label">Transaction Amount</label>
-                                                         <input type="tel" name="transaction_amt" class="form-control" placeholder="Enter Amount" />
+                                                         <input type="tel" name="transaction_amt" value="<%=transaction_amt%>" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' placeholder="Enter Amount" />
                                                      </div>
+
+                                                     <div class="form-group">
+                                                        <label class="form-group-label">Currency</label>
+                                                        <input type="tel" name="currency" class="form-control" value="<%=currency%>" placeholder="Enter currency" />
+                                                    </div>
                                                      <div class="form-group">
                                                          <label class="form-group-label">Transaction Type</label>
                                                          <select class="form-control theme-selectbox" name="transaction_type">
@@ -128,10 +132,11 @@
                                                         </div> -->
                                                      <div class="form-group">
                                                          <label class="form-group-label">Notes</label>
-                                                         <input type="text" name="notes" class="form-control" placeholder="Enter notes" />
+                                                         <input type="text" name="notes" value="<%=notes%>" class="form-control" placeholder="Enter notes" />
                                                      </div>
                                                     <div class="form-group form-group-submit text-center">
-                                                        <input type="hidden" name="unique_id" value="<%=output.unique_id %>" /> 
+                                                        <input type="hidden" name="unique_id" value="<%=output.unique_id %>" />
+                                                        <input type="hidden" name="sending_bank_address" class="form-control" placeholder="Enter bank account number" value="<%=output.address%>" /> 
                                                         <input type="submit" id="record_Submit" class="primary-btn submit-btn" onclick="return validateForm()" name="submit" value="Record to Ledger">
                                                         <div class="left-side">
                                                         <img id="loader" class="image-loader"  src="images/loader.gif">
@@ -145,6 +150,7 @@
                                              
                                          <form method="post" id="upload_form" enctype="multipart/form-data" action="/uploadBulkTransactions">
                                              <div id="bulk-transaction" class="tab-pane">
+                                                    <h2 class="dashboard-card-heading marT30">Upload Transactions</h2>
                                                  <div class="form marT30">
                                                      <div class="form-group">
                                                          <label class="form-group-label">To </label>
@@ -186,7 +192,7 @@
          <!-- Dashboard Area -->
  
          <!-- CSV Table Popup -->
-         <div class="popup csvtable-popup fs-overlay-popup">
+         <!-- <div class="popup csvtable-popup fs-overlay-popup">
             <div class="popup-content">
              <table id="csvtable">
                  <thead>
@@ -209,7 +215,7 @@
                  </tbody>
              </table>
              </div>
-         </div>
+         </div> -->
          <!-- CSV Table Popup -->
          
          <!-- FS Overlay -->
@@ -219,7 +225,7 @@
      </div>
      <!-- Site Container -->
  
-   
+     <%- include('./partials/footer') -%>
  
  </body>
  
@@ -294,4 +300,5 @@ return true;
  .left-side{
     margin-left: -450px;
  }
+ .error-msg{color:red}
  </style>

@@ -1,3 +1,4 @@
+<title>AML Central | Confirm transactions</title>
 <%- include('./partials/scripts') -%>
 
 <body>
@@ -46,7 +47,7 @@
 if(output.transactionsList.length>0){
 for(var i=0;i<output.transactionsList.length;i++){%>
 <tr>
-<td><%=output.transactionsList[i].blockchain_tx_id %></td>
+<td><%=output.transactionsList[i].transaction_id %></td>
 <!-- <td><%=output.transactionsList[i].sending_bank_id %></td> -->
 <td class="has-cell-label from-label"><%=output.transactionsList[i].sending_bank_name %></td>
 <!-- <td><%=output.transactionsList[i].sending_bank_acc_no %></td> -->
@@ -89,7 +90,7 @@ for(var i=0;i<output.transactionsList.length;i++){%>
     <!-- Scripts -->
 
     <!-- Scripts -->
-
+    <%- include('./partials/footer') -%>
 </body>
 
 </html>

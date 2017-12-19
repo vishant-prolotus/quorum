@@ -18,7 +18,7 @@ const cheerio = require('cheerio');
 
 var totalReadLines=0;
 var totalDocumentLines=0;
-var linesRead = 0;
+var linesRead=0;
 var blockChainIds=[];
 var Multer = require('multer');
 var Parse = require('csv-parse');
@@ -46,6 +46,7 @@ MongoClient.connect(databaseUrl, (err, database) => {
 })
 
 router.get('/', function (req, res, next) {
+    
     res.render("signIn.ejs");
 });
 router.get('/signIn', function (req, res, next) {
@@ -53,6 +54,7 @@ router.get('/signIn', function (req, res, next) {
 });
 
 router.post('/signIn', function (req, res, next) {
+    
     req.assert('email', 'Email is required').notEmpty();
     req.assert('email', 'A valid email is required').isEmail();
     req.assert('password', 'Password is required').notEmpty();
@@ -113,16 +115,20 @@ router.post('/signUp', function (req, res, next) {
         user.notes = '';
         user.telephone = '';
 
-
-        db.collection("users").insertOne(user, function (err, res) {
-            if (err) {
-                console.log(err);
-            } else if (res) {
-                //console.log(res);
-                console.log("User has been inserted");
-            }
-        });
-        res.redirect("/")
+         sendMail(data);
+        // res.render("signUp.ejs", {
+        //     success: "Admin will contact you soon";
+        // });
+        // db.collection("users").insertOne(user, function (err, res) {
+        //     if (err) {
+        //         console.log(err);
+        //     } else if (res) {
+        //         //console.log(res);
+        //         console.log("User has been inserted");
+        //     }
+        // });
+        req.flash('success_msg', 'Request has been send to Admin');
+        res.redirect("/signUp");
     }
 });
 
@@ -145,6 +151,8 @@ router.use(function(req,res,next){
 router.get('/dashboard', function (req, res, next) {
     var redError=0;
     var greenError=0;
+    var redTransactionsList=[];
+    var greenTransactionsList=[];
     console.log(Math.floor(Date.now() / 1000));
     if (!req.session.user) {
         res.redirect("/")
@@ -156,7 +164,10 @@ router.get('/dashboard', function (req, res, next) {
         graphValue={};
         graphValue.labels=[];
         graphValue.dataSet=[];
-        data.graphValue
+        data.greenTransactionsList=[];
+        data.redTransactionsList=[];
+        console.log('165');
+        console.log(getHttp(data.name));
         var web3 = new Web3(new Web3.providers.HttpProvider(getHttp(data.name)));
         var Contract = web3.eth.contract(abi).at(data.address);
         if(req.session.user.type=='bank'){
@@ -173,8 +184,10 @@ router.get('/dashboard', function (req, res, next) {
                     data.transactionsList = result;
                     result.forEach(function(i,j){
                     if(i.status=='RED'){
+                      redTransactionsList.push(i);
                       redError++  
                     }else if(i.status=='GREEN'){
+                      greenTransactionsList.push(i);
                       greenError++;
                     }
                     })
@@ -187,7 +200,7 @@ router.get('/dashboard', function (req, res, next) {
                            
                             {
                                 $group : {
-                                   _id : "$transaction_date" ,
+                                   _id : "$created_at" ,
                                    count: { $sum: 1 }
                                 }
                               }
@@ -201,9 +214,12 @@ router.get('/dashboard', function (req, res, next) {
                                     graphValue.dataSet.push(i.count);
         
                                 });
-                                  graphValue.labels=graphValue.labels;
+                                 graphValue.labels=graphValue.labels.reverse();
+                                 graphValue.dataSet=graphValue.dataSet.reverse();
                                   data.graphValue=graphValue;
-                              res.render("dashboard.ejs", { output: data })
+                                  data.greenTransactionsList=greenTransactionsList;
+                                  data.redTransactionsList=redTransactionsList;
+                                  res.render("dashboard.ejs", { output: data })
                           }
                       })
 
@@ -218,10 +234,12 @@ router.get('/dashboard', function (req, res, next) {
                     data.transactionsList = result;
                     result.forEach(function(i,j){
                         if(i.status=='RED'){
-                          redError++  
-                        }else if(i.status=='GREEN'){
-                          greenError++;
-                        }
+                            redTransactionsList.push(i);
+                            redError++  
+                          }else if(i.status=='GREEN'){
+                            greenTransactionsList.push(i);
+                            greenError++;
+                          }
                         })
                         data.redError=redError;
                         data.greenError=greenError;
@@ -231,7 +249,7 @@ router.get('/dashboard', function (req, res, next) {
                                 { $match : { $or: [ {"sending_bank_name": req.session.user.name}, {"receiving_bank_name":req.session.user.name}]}},
                                 {
                                     $group : {
-                                       _id : "$transaction_date" ,
+                                       _id : "$created_at" ,
                                        count: { $sum: 1 }
                                     }
                                   }
@@ -244,9 +262,12 @@ router.get('/dashboard', function (req, res, next) {
                                         graphValue.labels.push(new Date(i._id).getDate().toString());
                                         graphValue.dataSet.push(i.count);
                                     });
-                                      graphValue.labels=graphValue.labels;
+                                      graphValue.labels=graphValue.labels.reverse();
+                                      graphValue.dataSet=graphValue.dataSet.reverse();
                                       data.graphValue=graphValue;
-                                  res.render("dashboard.ejs", { output: data })
+                                      data.greenTransactionsList=greenTransactionsList;
+                                      data.redTransactionsList=redTransactionsList;
+                                      res.render("dashboard.ejs", { output: data })
                               }
                           })
                 }
@@ -388,7 +409,7 @@ router.get('/transfer', function (req, res, next) {
                     } else {
                         resultB.forEach(function (i, j) {
                             if (resultB[j]._id == sessionObject._id) {
-                                resultB.splice(j, 1);
+                                //resultB.splice(j, 1);
                             }
                         })
                         db.collection("transactions").count(function (errC, resultC) {
@@ -428,6 +449,7 @@ router.get('/transfer', function (req, res, next) {
 
 router.post('/transfer', function (req, res, next) {
     console.log("/transfer 316");
+    console.log(req.body);
     if (!req.session.user) {
         res.redirect("/")
     } else {
@@ -448,6 +470,7 @@ router.post('/transfer', function (req, res, next) {
             //TransferMoney(req.body.sending_bank_name, req.body.sending_bank_acc_no, req.body.receiving_bank_acc_no, req.body.transaction_amt,req.body).then(function (response, error) {
             TransferMoney(req.body).then(function (response, error) {
                 if (error) {
+                    console.log('466');
                     console.log('errors');
                     console.log(error);
                     req.flash('errors', error);
@@ -462,6 +485,7 @@ router.post('/transfer', function (req, res, next) {
                     transactionData.receiving_bank_name = postData.receiving_bank_name;
                     transactionData.receiving_bank_acc_no = postData.receiving_bank_acc_no;
                     transactionData.amount = postData.transaction_amt;
+                    transactionData.currency = postData.currency;
                     transactionData.transaction_type = postData.transaction_type;
                     transactionData.transaction_date = postData.transaction_date;
                     transactionData.notes = postData.notes;
@@ -471,28 +495,36 @@ router.post('/transfer', function (req, res, next) {
                     transactionData.blockchain_tx_id_hash=response.blockchain_tx_id_hash;
                     transactionData.status=response.status;
                 
-                    transactionData.send_value = response.one;
-                    transactionData.add_transaction = response.two;
-                    transactionData.cnfrm_transaction = response.three;
-                    transactionData.balance = response.four;
+                    // transactionData.send_value = response.one;
+                    // transactionData.add_transaction = response.two;
+                    // transactionData.cnfrm_transaction = response.three;
+                    // transactionData.balance = response.four;
+                    transactionData.created_at=moment().format("YYYY-MM-DD");
+                    transactionData.created_at_time=moment().format("HH:mm");
 
                     db.collection("transactions").insertOne(transactionData, function (err, result) {
                         if (err) {
                             console.log(err);
-                        } else {
-                           // console.log("Transaction has been done");
-                            //req.flash('success_msg', 'Transaction has been done');
-                            //res.redirect('/transactions');
-                            
+                        } else { 
                             req.flash('transactionsList',transactionData);
-                            console.log('3688')
                             console.log(req.flash('transactionsList'));
                             req.flash('success_msg', 'Transaction has been done');
                             res.redirect('/confirm_transactions?id='+transactionData.blockchain_tx_id);
                         }
                     });
                 }
-            })
+            }).catch(function(e){
+
+                req.flash('sending_bank_acc_no',req.body.sending_bank_acc_no);
+                req.flash('receiving_bank_acc_no',req.body.receiving_bank_acc_no);
+                req.flash('transaction_amt',req.body.transaction_amt);
+                req.flash('currency',req.body.currency);
+                req.flash('notes',req.body.notes);
+
+                console.log(req.flash())
+                req.flash('error_msg', "Something went wrong,please try again");
+                res.redirect('/transfer');
+            });
         }
     }
 });
@@ -540,7 +572,6 @@ router.get('/banks', function (req, res, next) {
                     }
                 })
                 data.bankList = result;
-                //console.log(data);
                 res.render("banks.ejs", { output: data })
             }
         });
@@ -562,7 +593,10 @@ router.post('/suspiciouslimit', function (req, res, next) {
                 if(err) {
                     console.log(err);
                 }else{
-                    res.redirect('/dashboard');
+                    
+
+                    req.flash('success_msg', "Limit has been saved");
+                    res.redirect('/suspiciouslimit');
                 }
             });
         },4000);
@@ -573,12 +607,17 @@ router.get('/suspiciouslimit', function (req, res, next) {
     if (!req.session.user) {
         res.redirect('/');
     } else {
+
     var data = {};
+    data.suspiciousLimitValue=0;
     var query = { "type": "bank" };
     db.collection("users").find(query).toArray(function (err, result) {
         if (err) {
             console.log(err);
         } else {
+
+
+
             //console.log(result);
             data.name = req.session.user.name;
             data.userType = req.session.user.type;
@@ -593,7 +632,23 @@ router.get('/suspiciouslimit', function (req, res, next) {
                     console.log(err);
                 } else {
                     data.transactions = result;
-                    res.render("suspiciouslimit.ejs", { output: data });
+
+                    console.log('621');
+                    var web3 = new Web3(new Web3.providers.HttpProvider(getHttp('observer')));
+                    var Contractor = web3.eth.contract(abitr).at("0x4df0f115551f6f36d753dc0ecf6832715bdd7001");
+                    
+                    Contractor.suspiciousLimit(function(err,response) {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log(response);
+                            data.suspiciousLimitValue=response;
+                            res.render("suspiciouslimit.ejs", { output: data });
+                        }
+                        
+                    });
+
+                    
                 }
             });
         }
@@ -646,7 +701,10 @@ router.post('/suspiciousaccount', function (req, res, next) {
                 if(err) {
                     console.log(err);
                 }else{
-                    res.redirect('/dashboard');
+                    console.log(response);
+                    req.flash('success_msg', "Suspicious account has been added");
+                    res.redirect('/suspiciousaccount');
+                    //res.redirect('/dashboard');
                 }
             });
         },4000);
@@ -715,10 +773,13 @@ router.post('/editBank', function (req, res, next) {
 });
 
 router.get('/transactions', function (req, res, next) {
+   
     if (!req.session.user) {
         res.redirect('/');
     } else {
         var data = {};
+        data.outgoingTransactions=[];
+        data.incomingTransactions=[];
         
         if(req.session.user.type=='admin' || req.session.user.type=='regulator'){
             if (req.query.filter != undefined) {
@@ -730,16 +791,26 @@ router.get('/transactions', function (req, res, next) {
             if (req.query.filter != undefined) {
                 var query = { "sending_bank_id": req.session.user._id, "receiving_bank_name": req.query.filter };
             } else {
-                    var query = { "sending_bank_id": req.session.user._id };
+                    var query = { $or: [ {"sending_bank_name": req.session.user.name}, {"receiving_bank_name":req.session.user.name}]};
                 
             }
         }
+        console.log(query);
         db.collection("transactions").find(query).sort({$natural:-1}).toArray(function (err, result) {
             if (err) {
                 console.log(err);
             } else {
                 data.name = req.session.user.name;
                 data.userType = req.session.user.type;
+
+                result.forEach(function(i,j){
+                    console.log(i.nature_of_transaction);
+                    if(i.receiving_bank_name==data.name){
+                        data.incomingTransactions.push(i);
+                    }else if(i.sending_bank_name==data.name){
+                        data.outgoingTransactions.push(i); 
+                    }
+                });
                 data.transactionsList = result;
                 var bankListQr = { type: "bank" };
                 db.collection("users").find(bankListQr).toArray(function (errB, resultB) {
@@ -754,7 +825,9 @@ router.get('/transactions', function (req, res, next) {
                         })
 
                         //console.log(resultB);
-
+                        console.log(data.incomingTransactions);
+                        console.log(data.outgoingTransactions);
+                       
                         data.bankList = resultB;
                         res.render("transactions.ejs", { output: data })
                     }
@@ -975,7 +1048,7 @@ module.exports = router;
 
 TransferMoney = function (transactionData) {
 IDbank=transactionData.sending_bank_name;
-IDaddress=transactionData.sending_bank_acc_no;
+IDaddress=transactionData.sending_bank_address;
 atAddr=transactionData.receiving_bank_acc_no;
 amount=transactionData.transaction_amt;
 return new Promise(function (resolve, reject) {
@@ -992,7 +1065,7 @@ console.log(transactionData);
 console.log('715');
 console.log('jbfjvbdjfbvhjbv');
 console.log(web3.eth.coinbase);
-Contract.sendValue(transactionData.transaction_id,transactionData.sending_bank_id,transactionData.sending_bank_acc_no,transactionData.sending_bank_id,transactionData.receiving_bank_id,transactionData.receiving_bank_acc_no,"Cash"
+Contract.sendValue(transactionData.transaction_id,transactionData.sending_bank_id,transactionData.sending_bank_address,transactionData.sending_bank_id,transactionData.receiving_bank_id,transactionData.receiving_bank_acc_no,"Cash"
 ,transactionData.transaction_amt,transactionData.transaction_type,1010101,{from:web3.eth.coinbase,gas:500000,privateFor:["R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY="]},function(err,res){
 if(err){
 console.log(err);
@@ -1021,6 +1094,55 @@ resolve(blockChainresult);
     });
 }
 
+
+TransferMoneyBulk = function (transactionData) {
+    IDbank=transactionData.sending_bank_name;
+    IDaddress=transactionData.sending_bank_address;
+    atAddr=transactionData.receiving_bank_acc_no;
+    amount=transactionData.transaction_amt;
+    return new Promise(function (resolve, reject) {
+    var web3 = new Web3(new Web3.providers.HttpProvider(getHttp(IDbank)));
+    var Contract = web3.eth.contract(abi).at(IDaddress);
+    var Contractor = web3.eth.contract(abitr).at("0x4df0f115551f6f36d753dc0ecf6832715bdd7001");
+    var UID = Contract.totalTransactions().c[0];
+    console.log('UID='+UID);
+   // setTimeout(function(){
+    transactionData.sending_bank_id=parseInt(transactionData.unique_id);
+    transactionData.receiving_bank_id=parseInt(transactionData.receiving_bank_id);
+    console.log('713');
+    console.log(transactionData);
+    console.log('715');
+    console.log('jbfjvbdjfbvhjbv');
+    console.log(web3.eth.coinbase);
+    Contract.sendValue(transactionData.transaction_id,transactionData.sending_bank_id,transactionData.sending_bank_address,transactionData.sending_bank_id,transactionData.receiving_bank_id,transactionData.receiving_bank_acc_no,"Cash"
+    ,transactionData.transaction_amt,transactionData.transaction_type,1010101,{from:web3.eth.coinbase,gas:500000,privateFor:["R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY="]},function(err,res){
+    if(err){
+    console.log(err);
+    reject(err);
+    }else{
+    var newTransactionID=Contract.totalTransactions().c[0];
+    console.log('1116='+Contract.totalTransactions().c[0]);
+    console.log('1117='+UID);
+    if(newTransactionID==UID){
+    console.log('744 not equal to');
+    reject(false);
+    //res.redirect("/transfer");
+    }else{
+    console.log('747');
+    var blockChainresult={};
+    TransactionResult=Contract.bankTransactions(Contract.transactionIDs(UID));
+    blockChainresult.blockchain_tx_id=UID;
+    blockChainresult.blockchain_tx_id_hash=Contract.transactionIDs(UID);
+    blockChainresult.status=TransactionResult[9];
+    resolve(blockChainresult);
+    }
+    
+    }
+    });
+    //},4000);
+        });
+    }
+    
 TransferMoney_old_7_dec = function (IDbank, IDaddress, atAddr, amount) {
     console.log(arguments);
 
@@ -1134,6 +1256,18 @@ getPrivateKey = function (address) {
     }
 }
 
+getBankAddress= function(name){
+    switch (name) {
+        case "bank1":
+            return "0x180893a0ec847fa8c92786791348d7d65916acbb";
+        case "bank2":
+            return "0xf9a2cb34b6b5fd7a2ac0c2e9b2b9406d6daffbd4";
+        case "bank3":
+            return "0xc8f717ba9593dc9d45c4518cf444d2cbd08af24d";
+        default:
+            return "0x180893a0ec847fa8c92786791348d7d65916acbb";
+    }
+}
 getHttp = function (port) {
     switch (port) {
         case "bank1":
@@ -1143,41 +1277,49 @@ getHttp = function (port) {
         case "bank3":
             return "http://127.0.0.1:22002";
         case "observer":
-            return "http://127.0.0.1:22004";
+            return "http://127.0.0.1:22003";
     }
 }
 
-sendMail = function (to, subject, message) {
-    //console.log(arguments);
-    var smtpConfig = {
-        service: 'Gmail',
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: 'anuj.singh@sofocle.com',
-            pass: 'sofo@123'
-        }
-    };
-
-    var transporter = nodemailer.createTransport(smtpConfig);
-    var mailOptions = {
-        from: '"AML"',
-        to: to,
-        cc: "anuj.singh@sofocle.com",
-        subject: subject,
-        html: message
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            return console.log(error);
-        } else {
-            console.log('success');
-            console.log(info);
-            return console.log(info.response);
-        }
+sendMail = function (data) {
+    // console.log(arguments);
+    // console.log(data);
+    var email 	= require("emailjs");
+    var server 	= email.server.connect({
+       user:	"AKIAIHKTTEJ5DKIZ5UZQ", 
+       password:"AsDAKFXyRUEd2+QG5N3rXDG0wZxakdeRN4rwQJSgKonZ", 
+       host:	"email-smtp.us-east-1.amazonaws.com", 
+       tls: {ciphers: "SSLv3"}
     });
+    var name=data.name;
+    var emailId=data.email;
+    var emailMessage='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> <meta name="viewport" content="width=device-width"> <title>Emailer</title></head><body style="-ms-text-size-adjust: 100%; -webkit-box-sizing: border-box; -webkit-text-size-adjust: 100%; Margin: 0; background: #f2f2f2 -moz-box-sizing: border-box; box-sizing: border-box; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; line-height: 1.3; margin: 0; min-width: 100%; padding: 0; text-align: left; width: 100% !important;"> <style> @media only screen { html { min-height: 100%; background: #f3f3f3; } } @media only screen and (max-width: 596px) { .small-float-center { margin: 0 auto !important; float: none !important; text-align: center !important; } .small-text-center { text-align: center !important; } .small-text-left { text-align: left !important; } .small-text-right { text-align: right !important; } } @media only screen and (max-width: 596px) { .hide-for-large { display: block !important; width: auto !important; overflow: visible !important; max-height: none !important; font-size: inherit !important; line-height: inherit !important; } } @media only screen and (max-width: 596px) { table.body table.container .hide-for-large, table.body table.container .row.hide-for-large { display: table !important; width: 100% !important; } } @media only screen and (max-width: 596px) { table.body table.container .callout-inner.hide-for-large { display: table-cell !important; width: 100% !important; } } @media only screen and (max-width: 596px) { table.body table.container .show-for-large { display: none !important; width: 0; mso-hide: all; overflow: hidden; } } @media only screen and (max-width: 596px) { table.body img { width: auto; height: auto; } table.body center { min-width: 0 !important; } table.body .container { width: 95% !important; } table.body .columns, table.body .column { height: auto !important; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding-left: 16px !important; padding-right: 16px !important; } table.body .columns .column, table.body .columns .columns, table.body .column .column, table.body .column .columns { padding-left: 0 !important; padding-right: 0 !important; } table.body .collapse .columns, table.body .collapse .column { padding-left: 0 !important; padding-right: 0 !important; } td.small-1, th.small-1 { display: inline-block !important; width: 8.33333% !important; } td.small-2, th.small-2 { display: inline-block !important; width: 16.66667% !important; } td.small-3, th.small-3 { display: inline-block !important; width: 25% !important; } td.small-4, th.small-4 { display: inline-block !important; width: 33.33333% !important; } td.small-5, th.small-5 { display: inline-block !important; width: 41.66667% !important; } td.small-6, th.small-6 { display: inline-block !important; width: 50% !important; } td.small-7, th.small-7 { display: inline-block !important; width: 58.33333% !important; } td.small-8, th.small-8 { display: inline-block !important; width: 66.66667% !important; } td.small-9, th.small-9 { display: inline-block !important; width: 75% !important; } td.small-10, th.small-10 { display: inline-block !important; width: 83.33333% !important; } td.small-11, th.small-11 { display: inline-block !important; width: 91.66667% !important; } td.small-12, th.small-12 { display: inline-block !important; width: 100% !important; } .columns td.small-12, .column td.small-12, .columns th.small-12, .column th.small-12 { display: block !important; width: 100% !important; } table.body td.small-offset-1, table.body th.small-offset-1 { margin-left: 8.33333% !important; Margin-left: 8.33333% !important; } table.body td.small-offset-2, table.body th.small-offset-2 { margin-left: 16.66667% !important; Margin-left: 16.66667% !important; } table.body td.small-offset-3, table.body th.small-offset-3 { margin-left: 25% !important; Margin-left: 25% !important; } table.body td.small-offset-4, table.body th.small-offset-4 { margin-left: 33.33333% !important; Margin-left: 33.33333% !important; } table.body td.small-offset-5, table.body th.small-offset-5 { margin-left: 41.66667% !important; Margin-left: 41.66667% !important; } table.body td.small-offset-6, table.body th.small-offset-6 { margin-left: 50% !important; Margin-left: 50% !important; } table.body td.small-offset-7, table.body th.small-offset-7 { margin-left: 58.33333% !important; Margin-left: 58.33333% !important; } table.body td.small-offset-8, table.body th.small-offset-8 { margin-left: 66.66667% !important; Margin-left: 66.66667% !important; } table.body td.small-offset-9, table.body th.small-offset-9 { margin-left: 75% !important; Margin-left: 75% !important; } table.body td.small-offset-10, table.body th.small-offset-10 { margin-left: 83.33333% !important; Margin-left: 83.33333% !important; } table.body td.small-offset-11, table.body th.small-offset-11 { margin-left: 91.66667% !important; Margin-left: 91.66667% !important; } table.body table.columns td.expander, table.body table.columns th.expander { display: none !important; } table.body .right-text-pad, table.body .text-pad-right { padding-left: 10px !important; } table.body .left-text-pad, table.body .text-pad-left { padding-right: 10px !important; } table.menu { width: 100% !important; } table.menu td, table.menu th { width: auto !important; display: inline-block !important; } table.menu.vertical td, table.menu.vertical th, table.menu.small-vertical td, table.menu.small-vertical th { display: block !important; } table.menu[align="center"] { width: auto !important; } table.button.small-expand, table.button.small-expanded { width: 100% !important; } table.button.small-expand table, table.button.small-expanded table { width: 100%; } table.button.small-expand table a, table.button.small-expanded table a { text-align: center !important; width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; } table.button.small-expand center, table.button.small-expanded center { min-width: 0; } } </style> <!-- <style> --> <table class="body" data-made-with-foundation="" style="Margin: 0; background: #f3f3f3; border-collapse: collapse; border-spacing: 0; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; height: 100%; line-height: 1.3; margin: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td class="float-center container" align="center" valign="top" style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0 auto; border-collapse: collapse !important; color: #0a0a0a; float: none; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0 auto; padding: 0; text-align: center; vertical-align: top; word-wrap: break-word;"> <center style="min-width: 580px; width: 100%;"> <!-- Container --> <table class="container" style="Margin: 0 auto; background: #fefefe; border-collapse: collapse; border-spacing: 0; margin: 0 auto; padding: 0; text-align: inherit; vertical-align: top; width: 580px;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0; padding: 0; text-align: left; vertical-align: top; word-wrap: break-word;"> <table class="spacer body-bg" style="background: #f3f3f3; border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 40px; font-weight: normal; hyphens: auto; line-height: 40px; margin: 0; mso-line-height-rule: exactly; padding: 0; text-align: left; vertical-align: top; word-wrap: break-word;" height="40px"></td> </tr> </tbody> </table> <!-- Logo --> <table class="logo" style="background: #087d8e; border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0; padding: 0; text-align: left; vertical-align: top; word-wrap: break-word;"> <a href="http://34.239.34.20/" target="_blank" style="Margin: 0; color: #337ab7; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 1.3; margin: 0; padding: 0; text-align: left; text-decoration: none;"><img src="http://34.239.34.20/images/logo-white.png" alt="Logo" style="-ms-interpolation-mode: bicubic; Margin-left: auto; Margin-right: auto; border: none; clear: both; display: block; margin-left: auto; margin-right: auto; max-width: 100%; outline: none; padding-bottom: 20px; padding-top: 20px; text-decoration: none; width: auto;"></a> </td> </tr> </tbody> </table> <!-- Logo --> <!-- Body Content --> <table class="body-content" style="border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0; padding: 0; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; padding-top: 50px; text-align: left; vertical-align: top; word-wrap: break-word;"> <div class="body-content-main-img"> <img src="http://34.239.34.20/images/mailer-envelope-img.gif" alt="Envelope Image" style="-ms-interpolation-mode: bicubic; Margin-left: auto; Margin-right: auto; clear: both; display: block; margin-left: auto; margin-right: auto; max-width: 100%; outline: none; text-decoration: none; width: auto;"> </div> <table class="spacer" style="border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 16px; margin: 0; mso-line-height-rule: exactly; padding: 0; text-align: left; vertical-align: top; word-wrap: break-word;" height="16px"></td> </tr> </tbody> </table> <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align: left;">Hi,</p> <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align: left;">Some has sent a request to create an AML account</p> <table class="list" style="border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top;"> <tbody> <tr class="list-row" style="padding: 0; text-align: left; vertical-align: top;"> <td class="list-row-heading" style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0; padding: 0; padding-bottom: 5px; padding-top: 5px; text-align: left; vertical-align: middle; width: 200px; word-wrap: break-word;"><b>User account e-mail:</b></td> <td class="list-row-text" style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0; padding: 0; text-align: left; vertical-align: middle; word-wrap: break-word;"><a style="Margin: 0; color: #337ab7; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 1.3; margin: 0; padding: 0; text-align: left; text-decoration: none;">'+emailId+'</a></td> </tr> <tr class="list-row" style="padding: 0; text-align: left; vertical-align: top;"> <td class="list-row-heading" style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0; padding: 0; padding-bottom: 5px; padding-top: 5px; text-align: left; vertical-align: middle; width: 200px; word-wrap: break-word;"><b>User account username:</b></td> <td class="list-row-text" style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 1.3; margin: 0; padding: 0; text-align: left; vertical-align: middle; word-wrap: break-word;">'+name+'</td> </tr> </tbody> </table> <table class="spacer" style="border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; hyphens: auto; line-height: 16px; margin: 0; mso-line-height-rule: exactly; padding: 0; text-align: left; vertical-align: top; word-wrap: break-word;" height="16px"></td> </tr> </tbody> </table> <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align: left;">Thanks</p> <p style="Margin: 0; Margin-bottom: 10px; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; line-height: 1.3; margin: 0; margin-bottom: 10px; padding: 0; text-align: left;">AML Central - Powered by Blockchain Worx, Singapore</p> </td> </tr> </tbody> </table> <!-- Body Content --> <table class="spacer body-bg" style="background: #f3f3f3; border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;"> <tbody> <tr style="padding: 0; text-align: left; vertical-align: top;"> <td style="-moz-hyphens: auto; -webkit-hyphens: auto; Margin: 0; border-collapse: collapse !important; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 40px; font-weight: normal; hyphens: auto; line-height: 40px; margin: 0; mso-line-height-rule: exactly; padding: 0; text-align: left; vertical-align: top; word-wrap: break-word;" height="40px"></td> </tr> </tbody> </table> </td> </tr> </tbody> </table> <!-- Container --> </center> </td> </tr> </tbody> </table></body></html>    ';
+       var message	= {
+       text:	emailMessage, 
+       from:	"info@blockchainworx.com", 
+       to:		"info@blockchainworx.com",
+       subject:	"Create account request",
+       bcc:"anuj.singh@sofocle.com",
+       ssl:true,
+       attachment:
+       [
+           {data: emailMessage, alternative: true},
+       ]
+    };
+     //console.log(emailMessage);
+     //console.log(message);
+    // send the message and get a callback with an error or details of the message that was sent
+    server.send(message, function(err, message) { 
+        if(err){
+            console.log('1210');
+            console.log(err);
+        }else{
+            console.log('1213');
+            console.log(message);
+        }
+        //console.log(err || message); 
+    }
+    );
 
 }
 function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done){
@@ -1213,12 +1355,15 @@ function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done){
 
 function parseFile(req, res, next){
     //console.log(req.files)
+    var counter=0;
     var allRecord=[];
+    linesRead = 0;
+    totalReadLines=0;
     var uploadedTransactionData=[];
-    console.log(req.files[0]);
+   // console.log(req.files[0]);
     
     if(req.files[0]==undefined){
-        cheerio.load('sdasd');
+        //cheerio.load('sdasd');
         req.flash('error_msg', 'Please provide csv file to upload');
         res.redirect("/transfer");
     }else{
@@ -1227,21 +1372,23 @@ function parseFile(req, res, next){
     var filePath = req.files[0].path;
 
     //console.log(filePath);
-    function onNewRecord(record){
-        //console.log(record)
+    
+   /* function onNewRecord(record){
+        var postData={};
+        req.body={};
+        var transactionData = {};
         allRecord.push(record);
         req.body=record;
-
-        TransferMoney(req.body).then(function (response, error) {
+        TransferMoneyBulk(req.body).then(function (response, error) {
             if (error) {
                 console.log('errors');
                 console.log(error);
                 req.flash('errors', error);
                 res.redirect('/transfer');
             } else {
+                console.log('in result');
                 var sessionObject = req.session.user;
                 var postData = req.body;
-                var transactionData = {};
                 transactionData.nature_of_transaction=req.body.nature_of_transaction;
                 transactionData.sending_bank_name=req.body.sending_bank_name
                 transactionData.sending_bank_acc_no = postData.sending_bank_acc_no;
@@ -1253,17 +1400,22 @@ function parseFile(req, res, next){
                 transactionData.notes = postData.notes;
                 transactionData.transaction_id = postData.transaction_id;
                 transactionData.sending_bank_id = sessionObject._id;
-                transactionData.send_value = response.one;
-                transactionData.add_transaction = response.two;
-                transactionData.cnfrm_transaction = response.three;
-                transactionData.balance = response.four;
+                transactionData.blockchain_tx_id=response.blockchain_tx_id;
+                transactionData.blockchain_tx_id_hash=response.blockchain_tx_id_hash;
+                transactionData.status=response.status;    
+                transactionData.created_at=moment().format("YYYY-MM-DD");
+                transactionData.created_at_time=moment().format("HH:mm");
                 db.collection("transactions").insertOne(transactionData, function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
+                     //   console.log(1305);
                         totalReadLines++;
                         blockChainIds.push(transactionData.blockchain_tx_id);
                         uploadedTransactionData.push(transactionData);
+                     //   console.log(transactionData);
+                        console.log('====================');
+                     //   console.log(uploadedTransactionData);
                         if((linesRead==totalReadLines) &&  totalReadLines!=0 && linesRead!=0){
                             var data={};
                             data.transactionsList=uploadedTransactionData;
@@ -1272,15 +1424,114 @@ function parseFile(req, res, next){
                             res.render("confirm_transactions",{output:data});
                            
                         }
-
-
-
+                       // console.log(1318);
                     }
                 });
             }
-        })
+        }).catch(function(e){
+            req.flash('error_msg', "Something went wrong,please try again");
+            res.redirect('/transfer');
+        });
 
 
+    }*/
+
+    function onNewRecord(record){
+        console.log(record);
+        allRecord.push(record);
+        var transactionData={};
+        transactionData=record
+        IDbank=transactionData.sending_bank_name;
+        IDaddress=getBankAddress(transactionData.sending_bank_name);
+        console.log('Address');
+        console.log(IDaddress);
+        atAddr=transactionData.receiving_bank_acc_no;
+        amount=transactionData.transaction_amt;
+        
+    
+        var web3 = new Web3(new Web3.providers.HttpProvider(getHttp(IDbank)));
+        var Contract = web3.eth.contract(abi).at(IDaddress);
+        var Contractor = web3.eth.contract(abitr).at("0x4df0f115551f6f36d753dc0ecf6832715bdd7001");
+        var UID = Contract.totalTransactions().c[0];
+        console.log("UID="+UID);
+        transactionData.sending_bank_id=parseInt(transactionData.unique_id);
+        transactionData.receiving_bank_id=parseInt(transactionData.receiving_bank_id);
+    
+        Contract.sendValue(transactionData.transaction_id,transactionData.sending_bank_id,IDaddress,transactionData.sending_bank_id,transactionData.receiving_bank_id,transactionData.receiving_bank_acc_no,"Cash"
+        ,transactionData.transaction_amt,transactionData.transaction_type,1010101,{from:web3.eth.coinbase,gas:500000,privateFor:["R56gy4dn24YOjwyesTczYa8m5xhP6hF2uTMCju/1xkY="]},function(err,response){
+        if(err){
+        console.log(err);
+        }else{
+        var newTransactionID=Contract.totalTransactions().c[0];
+        console.log('1439');
+        console.log(newTransactionID)
+        if(newTransactionID==UID){
+        console.log(false);
+        console.log(newTransactionID +"==="+UID);
+        }else{
+        var blockChainresult={};
+        TransactionResult=Contract.bankTransactions(Contract.transactionIDs(UID));
+        blockChainresult.blockchain_tx_id=UID;
+        blockChainresult.blockchain_tx_id_hash=Contract.transactionIDs(UID);
+        blockChainresult.status=TransactionResult[9];
+    
+        // insert into database
+
+        var sessionObject = req.session.user;
+        var postData = record;
+        transactionData.nature_of_transaction=record.nature_of_transaction;
+        transactionData.sending_bank_name=record.sending_bank_name
+        transactionData.sending_bank_acc_no = postData.sending_bank_acc_no;
+        transactionData.receiving_bank_name = postData.receiving_bank_name;
+        transactionData.receiving_bank_acc_no = postData.receiving_bank_acc_no;
+        transactionData.amount = postData.transaction_amt;
+        transactionData.transaction_type = postData.transaction_type;
+        transactionData.transaction_date = postData.transaction_date;
+        transactionData.notes = postData.notes;
+        transactionData.transaction_id = postData.transaction_id;
+        transactionData.sending_bank_id = sessionObject._id;
+        transactionData.blockchain_tx_id=response.blockchain_tx_id;
+        transactionData.blockchain_tx_id_hash=response.blockchain_tx_id_hash;
+        transactionData.status=response.status;    
+        transactionData.created_at=moment().format("YYYY-MM-DD");
+        transactionData.created_at_time=moment().format("HH:mm");
+        
+        db.collection("transactions").insertOne(transactionData, function (err, result) {
+            if (err) {
+                console.log(err);
+            } else { 
+                totalReadLines++;
+                console.log('total read lines='+totalReadLines);
+                console.log('lines read='+linesRead);
+                uploadedTransactionData.push(transactionData);
+
+                
+                //console.log(uploadedTransactionData);
+                if((linesRead==totalReadLines) &&  totalReadLines!=0 && linesRead!=0){
+                    var data={};
+                    console.log('1483');
+                    console.log(uploadedTransactionData);
+                    console.log('1485');
+                    data.transactionsList=uploadedTransactionData;
+                    req.flash('transactionsList',uploadedTransactionData);
+                    req.flash('success_msg', 'Transaction has been done');
+                    res.render("confirm_transactions",{output:data});
+                   
+                }
+
+                // req.flash('transactionsList',transactionData);
+                // req.flash('success_msg', 'Transaction has been done');
+                // res.redirect('/confirm_transactions?id='+transactionData.blockchain_tx_id);
+            }
+        });
+        
+        
+    
+        }
+        
+        }
+        });
+  
     }
 
     function onError(error){

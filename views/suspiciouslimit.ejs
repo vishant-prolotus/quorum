@@ -1,6 +1,5 @@
-
-
-        <%- include('./partials/scripts') -%>
+<title>AML Central | Suspicious Limit</title>
+<%- include('./partials/scripts') -%>
         
         <body>
         
@@ -33,15 +32,18 @@
                                                     <% if(success_msg){ %>
                                                     <%= success_msg %>
                                                     <% } %> 
+                                                    <% if(output.suspiciousLimitValue){%>
+                                                       
+                                                    <% } %>    
                                                     <form method="post" action="suspiciouslimit">
                                                         <div class="form marT30">
                                                             <div class="form-group">
-                                                                <label class="form-group-label">Amount</label>
-                                                                <input type="text" name="limit" class="form-control" placeholder="Enter Limit"  />
+                                                                <label class="form-group-label">Limit</label>
+                                                                <input type="text" name="limit" class="form-control" value="<%=output.suspiciousLimitValue%>" placeholder="Enter Limit"  />
                                                             </div>
 
                                                             <div class="form-group form-group-submit text-center">
-                                                                <input type="submit" class="primary-btn submit-btn" value="Save">
+                                                                <input type="submit" class="primary-btn submit-btn" value="Modify">
                                                             </div>
                                                     </div>
                                                 </form>
@@ -68,7 +70,7 @@
         
             <!-- Scripts -->
             <!-- Scripts -->
-        
+            <%- include('./partials/footer') -%>   
         </body>
         
         </html>

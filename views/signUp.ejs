@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Register | Banking</title>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/site.css" />
-</head>
+<title>AML Central | Signup</title>
+<%- include('./partials/scripts') -%>
 
 <body>
 
@@ -28,7 +17,7 @@
         <p class="login-sidebar-text">Enter details for creating your AML Account</p>
         </div>
         <div class="login-sidebar-footer">
-        <a href="#" class="sidebar-footer-text">Learn More</a>
+        <p class="sidebar-footer-text">Blockchain Worx , Singapore</p>
         </div>
         </aside>
         <!-- Login Sidebar -->
@@ -41,6 +30,12 @@
         </div>
         <div class="login-main-content">
         <h1 class="form-heading">Create your account</h1>
+        <h5>
+            <% if(success_msg){ %>
+            <%= success_msg %>   
+            <% } %>
+
+        </h5>
         <% for(var i = 0; i < errors.length - 1; i++){ %>
             <li> <%= errors[i].msg %> </li>
           <% } %>        
@@ -74,7 +69,9 @@
         
     </div>
     <!-- Site Container -->
-
+    <div class="visible-xs">
+    <%- include('./partials/footer') -%>
+</div>
 </body>
 
 </html>

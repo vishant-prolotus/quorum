@@ -31,6 +31,11 @@ app.use(function(req,res,next) {
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
   res.locals.errors = req.flash('error');
+  res.locals.sending_bank_acc_no=req.flash('sending_bank_acc_no');
+  res.locals.receiving_bank_acc_no=req.flash('receiving_bank_acc_no');
+  res.locals.transaction_amt=req.flash('transaction_amt');
+  res.locals.currency=req.flash('currency');
+  res.locals.notes=req.flash('notes');
   res.locals.users = req.user || null;
   res.locals.output= {};
   res.locals.userType="";

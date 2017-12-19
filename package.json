@@ -1,5 +1,5 @@
 {
-  "name": "test_frontend",
+  "name": "aml-demo",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -10,6 +10,8 @@
     "cookie-parser": "^1.4.3",
     "csv-parse": "^2.0.0",
     "ejs": "^2.5.7",
+    "email-js": "^2.0.0",
+    "emailjs": "^1.0.12",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
     "md5": "^2.2.1",
